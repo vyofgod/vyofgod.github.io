@@ -1,0 +1,245 @@
+<!DOCTYPE html>
+<html lang="tr-TR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <meta name="description" content="VyOfGoDDD">
+    <title>HACKED BY VyOfGod</title>
+    <link href="https://fonts.googleapis.com/css2?family=Kode+Mono&display=swap" rel="stylesheet">
+    <style>
+        * { 
+            overflow: hidden; 
+            margin: 0;
+            padding: 0;
+        }
+        html { 
+            height: 100%; 
+        }
+        body {
+            font-family: 'Kode Mono', monospace; 
+            background: #000;
+            color: #00ff00;
+            height: 100vh;
+            position: relative;
+        }
+
+        /* Matrix Kod Yağmuru */
+        canvas#matrix {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -1;
+            opacity: 0.6;
+        }
+
+        /* Parçacık Efekti */
+        #particles-js {
+            position: fixed;
+            width: 100%;
+            height: 100%;
+            z-index: -1;
+            opacity: 0.5;
+        }
+
+        button {
+            background: transparent; 
+            border: 2px solid #00ff00; 
+            cursor: pointer; 
+            color: #00ff00; 
+            font-family: 'Kode Mono', monospace; 
+            font-size: 2vmin; 
+            padding: 10px 20px;
+            text-shadow: 0 0 10px #00ff00;
+            transition: all 0.3s ease;
+        }
+        button:hover {
+            background: #00ff00;
+            color: #000;
+            box-shadow: 0 0 20px #00ff00;
+        }
+
+        video#back {
+            position: fixed; 
+            top: 50%; 
+            left: 50%; 
+            min-width: 105%; 
+            min-height: 105%; 
+            transform: translateX(-50%) translateY(-50%) rotate(5deg); 
+            z-index: -2; 
+            animation: glitch 2s infinite alternate;
+            filter: contrast(120%) brightness(90%);
+        }
+
+        @keyframes glitch {
+            0% { transform: translateX(-50%) translateY(-50%) rotate(5deg) skew(0deg); }
+            5% { transform: translateX(-50%) translateY(-50%) rotate(5deg) skew(10deg); filter: hue-rotate(90deg); }
+            10% { transform: translateX(-50%) translateY(-50%) rotate(5deg) skew(-10deg); }
+            15% { filter: hue-rotate(0deg); }
+            100% { transform: translateX(-50%) translateY(-50%) rotate(5deg) skew(0deg); }
+        }
+
+        #main {
+            position: fixed; 
+            top: 0; 
+            left: 0; 
+            display: table; 
+            width: 100%; 
+            height: 100vh; 
+            text-align: center; 
+            z-index: 1;
+        }
+        .fof {
+            display: table-cell; 
+            vertical-align: middle;
+        }
+        .fof h1 {
+            font-size: 8vmin; 
+            color: #fff; 
+            text-shadow: 0 0 15px #00ff00, 0 0 30px #00ff00; 
+            animation: flicker 1s infinite alternate, type 0.5s steps(6) infinite;
+            background: url('https://i.hizliresim.com/q8029t1.gif');
+            background-size: cover;
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+        }
+
+        @keyframes flicker {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.7; }
+        }
+        @keyframes type {
+            0% { width: 0; }
+            100% { width: 100%; }
+        }
+
+        h2 {
+            color: #fff; 
+            font-size: 2.5vmin; 
+            margin: 10px 0; 
+            text-shadow: 0 0 10px #00ff00;
+            animation: glow 2s infinite alternate;
+        }
+        h2 a {
+            color: #ff0000;
+            text-decoration: none;
+            transition: all 0.3s ease;
+        }
+        h2 a:hover {
+            text-shadow: 0 0 20px #ff0000;
+        }
+
+        @keyframes glow {
+            from { text-shadow: 0 0 10px #00ff00; }
+            to { text-shadow: 0 0 20px #00ff00, 0 0 40px #00ff00; }
+        }
+
+        h3 {
+            color: #a5a5a5; 
+            font-size: 1.2vmin; 
+            font-style: italic; 
+            margin: 0; 
+        }
+
+        /* Konsol Efekti */
+        .console {
+            position: absolute;
+            color: #00ff00;
+            font-size: 1vmin;
+            opacity: 0.8;
+            animation: fade 3s infinite;
+        }
+        @keyframes fade {
+            0%, 100% { opacity: 0.8; }
+            50% { opacity: 0.3; }
+        }
+    </style>
+</head>
+<body onclick="unmuteee()">
+    <!-- Matrix Kod Yağmuru -->
+    <canvas id="matrix"></canvas>
+    <!-- Parçacık Efekti -->
+    <div id="particles-js"></div>
+
+    <video loop autoplay muted preload="none" id="back" x-webkit-airplay="allow" webkit-playsinline playsinline>
+        <source src="https://claireliao.org/.well-known/acme-challenge/update/elliot.mp4" type="video/mp4">
+    </video>
+    <div id="main">
+        <div class="fof">
+            <h1>VyOfGod</h1>
+            <h2><a href="https://web.telegram.org/a/@vyofgod">Telegram: @vyofgod</a></h2>
+            <h2>HACKED BY VyOfGoDDD</h2>
+            <h2>Sorry admin, I don't give a damn</h2>
+        </div>
+    </div>
+
+    <!-- Rastgele Konsol Kodları -->
+    <div class="console" style="top: 10px; left: 10px;">$ sudo rm -rf /admin</div>
+    <div class="console" style="bottom: 10px; right: 10px;">$ chmod 777 hacked.txt</div>
+    <div class="console" style="top: 50px; right: 20px;">$ ping -c 666 vyofgod.local</div>
+
+    <!-- Kütüphaneler -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/particles.js@2.0.0/particles.min.js"></script>
+    <script>
+        // Matrix Efekti
+        const canvas = document.getElementById('matrix');
+        const ctx = canvas.getContext('2d');
+        canvas.height = window.innerHeight;
+        canvas.width = window.innerWidth;
+        const chars = "VyOfGodVYOFGODvyofgodVyOfGoDDD0123456789@#$%^&*()";
+        const fontSize = 16;
+        const columns = canvas.width / fontSize;
+        const drops = Array(Math.floor(columns)).fill(1);
+
+        function draw() {
+            ctx.fillStyle = "rgba(0, 0, 0, 0.05)";
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
+            ctx.fillStyle = "#00ff00";
+            ctx.font = fontSize + "px monospace";
+            for (let i = 0; i < drops.length; i++) {
+                const text = chars.charAt(Math.floor(Math.random() * chars.length));
+                ctx.fillText(text, i * fontSize, drops[i] * fontSize);
+                if (drops[i] * fontSize > canvas.height && Math.random() > 0.975) {
+                    drops[i] = 0;
+                }
+                drops[i]++;
+            }
+        }
+        setInterval(draw, 50);
+
+        // Parçacık Efekti
+        particlesJS("particles-js", {
+            "particles": {
+                "number": { "value": 100 },
+                "color": { "value": "#00ff00" },
+                "shape": { "type": "circle" },
+                "opacity": { "value": 0.5 },
+                "size": { "value": 3 },
+                "move": { "speed": 3 }
+            },
+            "interactivity": {
+                "events": { "onhover": { "enable": true, "mode": "repulse" } }
+            }
+        });
+
+        // Video ve Ses Kontrolü
+        var video = $('video');
+        $(document).ready(function () {
+            $('body, #main, .fof').hover(function () {
+                setTimeout(function () {
+                    video.get(0).play();
+                    console.log('played');
+                }, 1000);
+            });
+        });
+
+        function unmuteee() {
+            $("video").prop('muted', false);
+        }
+    </script>
+</body>
+</html>
