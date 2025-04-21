@@ -1,245 +1,1125 @@
 <!DOCTYPE html>
-<html lang="tr-TR">
+<html lang="tr">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
-    <meta name="description" content="VyOfGoDDD">
-    <title>HACKED BY VyOfGod</title>
-    <link href="https://fonts.googleapis.com/css2?family=Kode+Mono&display=swap" rel="stylesheet">
+    <title>Gelişmiş OSINT Grafik Görselleştirme Aracı</title>
+    <!-- Include vis-network library CSS -->
+    <link href="https://unpkg.com/vis-network/styles/vis-network.min.css" rel="stylesheet" type="text/css" />
     <style>
-        * { 
-            overflow: hidden; 
+        /* Basic Reset & Dark Theme */
+        * {
+            box-sizing: border-box;
             margin: 0;
             padding: 0;
         }
-        html { 
-            height: 100%; 
+
+        html, body {
+            height: 100%;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #1e1e1e;
+            color: #d4d4d4;
+            overflow: hidden; /* Prevent body scrollbars */
         }
-        body {
-            font-family: 'Kode Mono', monospace; 
-            background: #000;
-            color: #00ff00;
+
+        /* Layout */
+        .app-container {
+            display: flex;
+            flex-direction: column;
             height: 100vh;
+        }
+
+        .control-bar {
+            background-color: #252526;
+            padding: 8px 15px;
+            border-bottom: 1px solid #333;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            flex-shrink: 0;
+            flex-wrap: wrap; /* Allow wrapping on smaller screens */
+        }
+
+        .main-content {
+            display: flex;
+            flex-grow: 1;
+            height: calc(100% - 51px); /* Adjust based on control-bar height */
+        }
+
+        .sidebar {
+            width: 280px; /* Slightly wider */
+            background-color: #252526;
+            padding: 15px;
+            border-right: 1px solid #333;
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+            overflow-y: auto;
+            flex-shrink: 0;
+        }
+
+        .graph-area {
+            flex-grow: 1;
             position: relative;
+            display: flex;
+            flex-direction: column;
         }
 
-        /* Matrix Kod Yağmuru */
-        canvas#matrix {
-            position: fixed;
-            top: 0;
-            left: 0;
+        #graph-canvas {
             width: 100%;
             height: 100%;
-            z-index: -1;
-            opacity: 0.6;
+            background-color: #181818;
+            border: none;
         }
 
-        /* Parçacık Efekti */
-        #particles-js {
-            position: fixed;
+        .details-panel {
+            width: 320px; /* Slightly wider */
+            background-color: #252526;
+            padding: 15px;
+            border-left: 1px solid #333;
+            overflow-y: auto;
+            display: none;
+            flex-shrink: 0;
+        }
+        .details-panel.visible {
+            display: flex; /* Use flex for internal layout */
+            flex-direction: column;
+        }
+
+        /* UI Elements Styling */
+        h2, h3 {
+            color: #cccccc;
+            border-bottom: 1px solid #444;
+            padding-bottom: 5px;
+            margin-bottom: 10px;
+            font-size: 1.1em;
+        }
+
+        fieldset {
+            border: 1px solid #444;
+            padding: 10px;
+            margin-bottom: 15px;
+            border-radius: 4px;
+        }
+        legend {
+            padding: 0 5px;
+            color: #aaa;
+            font-size: 0.9em;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 5px;
+            font-size: 0.9em;
+            color: #a0a0a0;
+        }
+
+        input[type="text"],
+        input[type="search"],
+        select,
+        textarea {
             width: 100%;
-            height: 100%;
-            z-index: -1;
-            opacity: 0.5;
+            padding: 8px;
+            margin-bottom: 10px;
+            background-color: #3c3c3c;
+            border: 1px solid #555;
+            color: #d4d4d4;
+            border-radius: 3px;
+            font-size: 0.95em;
+        }
+        input[type="search"] {
+            padding-left: 25px; /* Space for icon */
+            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' fill='%23a0a0a0' class='bi bi-search' viewBox='0 0 16 16'%3E%3Cpath d='M11.742 10.344a6.5 6.5 0 1 0-1.397 1.398h-.001c.03.04.062.078.098.115l3.85 3.85a1 1 0 0 0 1.415-1.414l-3.85-3.85a1.007 1.007 0 0 0-.115-.1zM12 6.5a5.5 5.5 0 1 1-11 0 5.5 5.5 0 0 1 11 0z'/%3E%3C/svg%3E");
+            background-repeat: no-repeat;
+            background-position: 8px center;
+            background-size: 14px 14px;
+        }
+
+        textarea {
+            min-height: 60px;
+            resize: vertical;
         }
 
         button {
-            background: transparent; 
-            border: 2px solid #00ff00; 
-            cursor: pointer; 
-            color: #00ff00; 
-            font-family: 'Kode Mono', monospace; 
-            font-size: 2vmin; 
-            padding: 10px 20px;
-            text-shadow: 0 0 10px #00ff00;
-            transition: all 0.3s ease;
+            padding: 8px 12px;
+            background-color: #0e639c;
+            color: white;
+            border: none;
+            border-radius: 3px;
+            cursor: pointer;
+            transition: background-color 0.2s ease;
+            font-size: 0.9em;
+            display: inline-flex; /* Align icon and text */
+            align-items: center;
+            gap: 5px;
         }
         button:hover {
-            background: #00ff00;
-            color: #000;
-            box-shadow: 0 0 20px #00ff00;
+            background-color: #1177bb;
+        }
+        button:disabled {
+            background-color: #555;
+            cursor: not-allowed;
+            opacity: 0.7;
+        }
+        button.secondary {
+            background-color: #4a4a4a;
+        }
+        button.secondary:hover {
+            background-color: #5a5a5a;
+        }
+         button.danger {
+            background-color: #a83232;
+        }
+        button.danger:hover {
+            background-color: #c84242;
         }
 
-        video#back {
-            position: fixed; 
-            top: 50%; 
-            left: 50%; 
-            min-width: 105%; 
-            min-height: 105%; 
-            transform: translateX(-50%) translateY(-50%) rotate(5deg); 
-            z-index: -2; 
-            animation: glitch 2s infinite alternate;
-            filter: contrast(120%) brightness(90%);
-        }
+        .sidebar-section { /* Replaced by fieldset */ }
 
-        @keyframes glitch {
-            0% { transform: translateX(-50%) translateY(-50%) rotate(5deg) skew(0deg); }
-            5% { transform: translateX(-50%) translateY(-50%) rotate(5deg) skew(10deg); filter: hue-rotate(90deg); }
-            10% { transform: translateX(-50%) translateY(-50%) rotate(5deg) skew(-10deg); }
-            15% { filter: hue-rotate(0deg); }
-            100% { transform: translateX(-50%) translateY(-50%) rotate(5deg) skew(0deg); }
+        .details-content {
+            flex-grow: 1; /* Allow content to fill space */
         }
+        .details-content p, .details-content div {
+            margin-bottom: 10px;
+            word-wrap: break-word;
+            font-size: 0.95em;
+        }
+        .details-content strong {
+            color: #b0b0b0;
+            margin-right: 5px;
+        }
+        .details-content ul {
+            list-style: none;
+            padding-left: 0;
+            margin-top: 5px;
+        }
+        .details-content li {
+            background-color: #3c3c3c;
+            padding: 6px 8px;
+            margin-bottom: 4px;
+            border-radius: 3px;
+            font-size: 0.9em;
+        }
+        .details-content .edit-section {
+            background-color: #2c2c2c;
+            padding: 15px;
+            border-radius: 4px;
+            margin-top: 15px;
+            border: 1px solid #444;
+        }
+        .details-content .edit-section label {
+            font-size: 0.85em;
+        }
+         .details-content .edit-section button {
+            margin-right: 5px;
+            margin-top: 5px;
+         }
 
-        #main {
-            position: fixed; 
-            top: 0; 
-            left: 0; 
-            display: table; 
-            width: 100%; 
-            height: 100vh; 
-            text-align: center; 
-            z-index: 1;
-        }
-        .fof {
-            display: table-cell; 
-            vertical-align: middle;
-        }
-        .fof h1 {
-            font-size: 8vmin; 
-            color: #fff; 
-            text-shadow: 0 0 15px #00ff00, 0 0 30px #00ff00; 
-            animation: flicker 1s infinite alternate, type 0.5s steps(6) infinite;
-            background: url('https://i.hizliresim.com/q8029t1.gif');
-            background-size: cover;
-            -webkit-background-clip: text;
-            background-clip: text;
-            color: transparent;
-        }
-
-        @keyframes flicker {
-            0%, 100% { opacity: 1; }
-            50% { opacity: 0.7; }
-        }
-        @keyframes type {
-            0% { width: 0; }
-            100% { width: 100%; }
-        }
-
-        h2 {
-            color: #fff; 
-            font-size: 2.5vmin; 
-            margin: 10px 0; 
-            text-shadow: 0 0 10px #00ff00;
-            animation: glow 2s infinite alternate;
-        }
-        h2 a {
-            color: #ff0000;
-            text-decoration: none;
-            transition: all 0.3s ease;
-        }
-        h2 a:hover {
-            text-shadow: 0 0 20px #ff0000;
-        }
-
-        @keyframes glow {
-            from { text-shadow: 0 0 10px #00ff00; }
-            to { text-shadow: 0 0 20px #00ff00, 0 0 40px #00ff00; }
-        }
-
-        h3 {
-            color: #a5a5a5; 
-            font-size: 1.2vmin; 
-            font-style: italic; 
-            margin: 0; 
-        }
-
-        /* Konsol Efekti */
-        .console {
+        /* Context Menu */
+        #context-menu {
             position: absolute;
-            color: #00ff00;
-            font-size: 1vmin;
-            opacity: 0.8;
-            animation: fade 3s infinite;
+            background-color: #2d2d2d;
+            border: 1px solid #555;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.5);
+            border-radius: 4px;
+            padding: 5px 0;
+            display: none;
+            z-index: 1000;
+            min-width: 170px; /* Slightly wider */
         }
-        @keyframes fade {
-            0%, 100% { opacity: 0.8; }
-            50% { opacity: 0.3; }
+        #context-menu ul {
+            list-style: none;
+            padding: 0; margin: 0;
         }
+        #context-menu li {
+            padding: 8px 15px;
+            cursor: pointer;
+            color: #d4d4d4;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 0.95em;
+        }
+        #context-menu li:hover {
+            background-color: #0e639c;
+            color: white;
+        }
+
+        /* Edge Creation Mode Indicator */
+        .edge-mode-indicator {
+            font-style: italic;
+            color: #ffcc00; /* Yellowish color */
+            margin-left: 15px;
+            font-size: 0.9em;
+            display: none; /* Initially hidden */
+        }
+
+        /* Toast Notifications */
+        #toast-container {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            z-index: 2000;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+        .toast {
+            padding: 12px 18px;
+            border-radius: 4px;
+            color: #fff;
+            font-size: 0.95em;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.3);
+            opacity: 0;
+            transform: translateY(20px);
+            transition: opacity 0.3s ease, transform 0.3s ease;
+        }
+        .toast.show {
+            opacity: 1;
+            transform: translateY(0);
+        }
+        .toast.info { background-color: #0e639c; }
+        .toast.success { background-color: #28a745; }
+        .toast.error { background-color: #dc3545; }
+
+        /* Vis Network Customization */
+        .vis-network {
+          outline: none; /* Remove focus border */
+        }
+        /* Style for highlighted nodes (search results) */
+        .vis-network .vis-node.highlighted {
+            border-color: #ffcc00 !important; /* Bright yellow border */
+            border-width: 4px !important;
+        }
+         /* Style for selected edge */
+        .vis-network .vis-edge.selected {
+            color: #ffcc00 !important; /* Bright yellow edge color */
+            width: 3px !important;
+        }
+        .vis-network .vis-edge.selected .vis-label {
+             color: #ffcc00 !important; /* Bright yellow label */
+             font-weight: bold;
+        }
+
     </style>
 </head>
-<body onclick="unmuteee()">
-    <!-- Matrix Kod Yağmuru -->
-    <canvas id="matrix"></canvas>
-    <!-- Parçacık Efekti -->
-    <div id="particles-js"></div>
+<body>
 
-    <video loop autoplay muted preload="none" id="back" x-webkit-airplay="allow" webkit-playsinline playsinline>
-        <source src="https://claireliao.org/.well-known/acme-challenge/update/elliot.mp4" type="video/mp4">
-    </video>
-    <div id="main">
-        <div class="fof">
-            <h1>VyOfGod</h1>
-            <h2><a href="https://web.telegram.org/a/@vyofgod">Telegram: @vyofgod</a></h2>
-            <h2>HACKED BY VyOfGoDDD</h2>
-            <h2>Sorry admin, I don't give a damn</h2>
+    <div class="app-container">
+        <!-- Top Control Bar -->
+        <div class="control-bar">
+            <input type="search" id="search-input" placeholder="🔍 Node Ara...">
+            <button id="save-graph-btn">💾 Kaydet</button>
+            <button id="load-graph-btn">📂 Yükle</button>
+            <button id="toggle-physics-btn">▶️ Fiziği Durdur</button>
+            <button id="clear-graph-btn" class="danger">🗑️ Grafiği Temizle</button>
+            <span id="edge-mode-status" class="edge-mode-indicator"></span>
+            <button id="cancel-edge-btn" class="secondary" style="display: none;">İptal</button>
+        </div>
+
+        <!-- Main Content Area -->
+        <div class="main-content">
+            <!-- Left Sidebar -->
+            <div class="sidebar">
+                <fieldset>
+                    <legend>Entity Node Ekle</legend>
+                    <label for="entity-type">Entity Tipi:</label>
+                    <select id="entity-type"></select>
+
+                    <label for="entity-value">Değer:</label>
+                    <input type="text" id="entity-value" placeholder="örn. john.doe@email.com">
+
+                    <label for="entity-desc">Açıklama (Opsiyonel):</label>
+                    <textarea id="entity-desc" placeholder="örn. Birincil email, Proje X ile ilişkili"></textarea>
+
+                    <label for="entity-source">Kaynak (Opsiyonel):</label>
+                    <input type="text" id="entity-source" placeholder="örn. Halka Açık Kayıt Araması">
+
+                    <button id="add-node-btn">➕ Node Ekle</button>
+                </fieldset>
+
+                <fieldset>
+                    <legend>İlişki Edge Ekle</legend>
+                    <p style="font-size: 0.9em; color: #a0a0a0; margin-bottom: 10px;">Başlamak için bir node'a, sonra bağlanacak diğer node'a tıklayın. Aşağıya ilişki tipini girin.</p>
+                    <label for="relationship-type">İlişki Tipi:</label>
+                    <input type="text" id="relationship-type" placeholder="örn. SAHİBİ, ÇALIŞIYOR">
+                    <p id="edge-creation-help" style="font-size: 0.8em; color: #888; margin-top: 5px;">Grafikte bir node'a tıklayarak başlatın.</p>
+                </fieldset>
+
+                 <fieldset>
+                    <legend>Entity Tipleri</legend>
+                    <ul id="entity-legend" style="list-style: none; padding: 0; font-size: 0.9em;"></ul>
+                 </fieldset>
+            </div>
+
+            <!-- Central Graph Area -->
+            <div class="graph-area">
+                <div id="graph-canvas"></div>
+            </div>
+
+            <!-- Right Details Panel -->
+            <div id="details-panel" class="details-panel">
+                <h3 id="details-title">Detaylar</h3>
+                <div id="details-content">
+                    <p>Detayları görmek için bir node veya edge üzerine tıklayın.</p>
+                </div>
+            </div>
         </div>
     </div>
 
-    <!-- Rastgele Konsol Kodları -->
-    <div class="console" style="top: 10px; left: 10px;">$ sudo rm -rf /admin</div>
-    <div class="console" style="bottom: 10px; right: 10px;">$ chmod 777 hacked.txt</div>
-    <div class="console" style="top: 50px; right: 20px;">$ ping -c 666 vyofgod.local</div>
+    <!-- Context Menu Structure (hidden by default) -->
+    <div id="context-menu">
+        <ul>
+            <li id="ctx-expand">➕ Simulate Expand</li>
+            <li id="ctx-edit">✏️ Düzenle</li>
+            <li id="ctx-details">ℹ️ Detayları Gör</li>
+            <li id="ctx-delete">🗑️ Sil</li>
+        </ul>
+    </div>
 
-    <!-- Kütüphaneler -->
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/particles.js@2.0.0/particles.min.js"></script>
-    <script>
-        // Matrix Efekti
-        const canvas = document.getElementById('matrix');
-        const ctx = canvas.getContext('2d');
-        canvas.height = window.innerHeight;
-        canvas.width = window.innerWidth;
-        const chars = "VyOfGodVYOFGODvyofgodVyOfGoDDD0123456789@#$%^&*()";
-        const fontSize = 16;
-        const columns = canvas.width / fontSize;
-        const drops = Array(Math.floor(columns)).fill(1);
+    <!-- Toast Notification Container -->
+    <div id="toast-container"></div>
 
-        function draw() {
-            ctx.fillStyle = "rgba(0, 0, 0, 0.05)";
-            ctx.fillRect(0, 0, canvas.width, canvas.height);
-            ctx.fillStyle = "#00ff00";
-            ctx.font = fontSize + "px monospace";
-            for (let i = 0; i < drops.length; i++) {
-                const text = chars.charAt(Math.floor(Math.random() * chars.length));
-                ctx.fillText(text, i * fontSize, drops[i] * fontSize);
-                if (drops[i] * fontSize > canvas.height && Math.random() > 0.975) {
-                    drops[i] = 0;
+    <!-- Include vis-network library JS -->
+    <script type="text/javascript" src="https://unpkg.com/vis-network/standalone/umd/vis-network.min.js"></script>
+
+    <script type="text/javascript">
+        document.addEventListener('DOMContentLoaded', () => {
+
+            // --- Configuration ---
+            const entityTypes = {
+                'Person': { group: 'person', color: '#FF6347', icon: '👤' },
+                'Organization': { group: 'organization', color: '#4682B4', icon: '🏢' },
+                'Email': { group: 'email', color: '#32CD32', icon: '✉️' },
+                'Domain': { group: 'domain', color: '#FFD700', icon: '🌐' },
+                'IP Address': { group: 'ip', color: '#6A5ACD', icon: '💻' },
+                'Phone Number': { group: 'phone', color: '#FF8C00', icon: '📞' },
+                'Location': { group: 'location', color: '#20B2AA', icon: '📍' },
+                'Social Media Account': { group: 'social', color: '#DA70D6', icon: '📱' },
+                'Digital Asset': { group: 'asset', color: '#87CEEB', icon: '📄' },
+                'Malware': { group: 'malware', color: '#DC143C', icon: '🐞' },
+                'Event': { group: 'event', color: '#9370DB', icon: '📅' }, // New Type Example
+                'Vehicle': { group: 'vehicle', color: '#778899', icon: '🚗' }  // New Type Example
+            };
+            const LOCAL_STORAGE_KEY = 'osintGraphData_v2';
+
+            // --- DOM Element References ---
+            // (Existing refs + new ones)
+            const graphCanvas = document.getElementById('graph-canvas');
+            const entityTypeSelect = document.getElementById('entity-type');
+            const entityValueInput = document.getElementById('entity-value');
+            const entityDescInput = document.getElementById('entity-desc');
+            const entitySourceInput = document.getElementById('entity-source');
+            const addNodeBtn = document.getElementById('add-node-btn');
+            const relationshipTypeInput = document.getElementById('relationship-type');
+            const clearGraphBtn = document.getElementById('clear-graph-btn');
+            const detailsPanel = document.getElementById('details-panel');
+            const detailsContent = document.getElementById('details-content');
+            const detailsTitle = document.getElementById('details-title');
+            const contextMenu = document.getElementById('context-menu');
+            const entityLegend = document.getElementById('entity-legend');
+            const edgeModeStatus = document.getElementById('edge-mode-status');
+            const cancelEdgeBtn = document.getElementById('cancel-edge-btn');
+            const edgeCreationHelp = document.getElementById('edge-creation-help');
+            const searchInput = document.getElementById('search-input');
+            const saveGraphBtn = document.getElementById('save-graph-btn');
+            const loadGraphBtn = document.getElementById('load-graph-btn');
+            const togglePhysicsBtn = document.getElementById('toggle-physics-btn');
+            const toastContainer = document.getElementById('toast-container');
+
+            // --- Graph State ---
+            let nodes = new vis.DataSet([]);
+            let edges = new vis.DataSet([]);
+            let network = null;
+            let selectedNodeForEdge = null;
+            let lastRightClickedNodeId = null;
+            let currentlyEditingItemId = null; // Store ID of item being edited (node or edge)
+            let isPhysicsEnabled = true;
+            let highlightedNodes = []; // Keep track of search highlights
+
+            // --- Helper Functions ---
+
+            const generateId = () => `id_${Date.now()}_${Math.random().toString(16).slice(2)}`;
+
+            function showToast(message, type = 'info', duration = 3000) {
+                const toast = document.createElement('div');
+                toast.className = `toast ${type}`;
+                toast.textContent = message;
+                toastContainer.appendChild(toast);
+
+                // Trigger reflow to enable animation
+                toast.offsetHeight;
+
+                toast.classList.add('show');
+
+                setTimeout(() => {
+                    toast.classList.remove('show');
+                    setTimeout(() => {
+                        toast.remove();
+                    }, 300); // Remove after fade out animation
+                }, duration);
+            }
+
+            function populateEntityTypes() {
+                entityTypeSelect.innerHTML = '';
+                entityLegend.innerHTML = '';
+                Object.entries(entityTypes).forEach(([typeName, config]) => {
+                    const option = document.createElement('option');
+                    option.value = typeName;
+                    option.textContent = `${config.icon} ${typeName}`;
+                    entityTypeSelect.appendChild(option);
+
+                    const legendItem = document.createElement('li');
+                    legendItem.style.display = 'flex';
+                    legendItem.style.alignItems = 'center';
+                    legendItem.style.marginBottom = '5px';
+                    legendItem.innerHTML = `
+                        <span style="display: inline-block; width: 12px; height: 12px; background-color: ${config.color}; border-radius: 50%; margin-right: 8px; border: 1px solid #555;"></span>
+                        ${config.icon} ${typeName}
+                    `;
+                    entityLegend.appendChild(legendItem);
+                });
+            }
+
+            function hideContextMenu() {
+                contextMenu.style.display = 'none';
+                lastRightClickedNodeId = null;
+            }
+
+            function resetEdgeCreationMode() {
+                if (selectedNodeForEdge) {
+                    // Optional: remove visual indication if any added
+                     network.unselectAll(); // Simple way to clear selection state
                 }
-                drops[i]++;
+                selectedNodeForEdge = null;
+                edgeModeStatus.style.display = 'none';
+                cancelEdgeBtn.style.display = 'none';
+                edgeCreationHelp.textContent = 'Grafikte bir node\'a tıklayarak başlatın.';
+                relationshipTypeInput.value = '';
             }
-        }
-        setInterval(draw, 50);
 
-        // Parçacık Efekti
-        particlesJS("particles-js", {
-            "particles": {
-                "number": { "value": 100 },
-                "color": { "value": "#00ff00" },
-                "shape": { "type": "circle" },
-                "opacity": { "value": 0.5 },
-                "size": { "value": 3 },
-                "move": { "speed": 3 }
-            },
-            "interactivity": {
-                "events": { "onhover": { "enable": true, "mode": "repulse" } }
+            function clearHighlights() {
+                if (highlightedNodes.length > 0) {
+                    const updates = highlightedNodes.map(id => ({ id: id, borderWidth: 2 })); // Reset border width
+                    nodes.update(updates);
+                    highlightedNodes = [];
+                }
+                 // Also clear general selection
+                 network.unselectAll();
             }
-        });
 
-        // Video ve Ses Kontrolü
-        var video = $('video');
-        $(document).ready(function () {
-            $('body, #main, .fof').hover(function () {
-                setTimeout(function () {
-                    video.get(0).play();
-                    console.log('played');
-                }, 1000);
+             function displayNodeDetails(nodeId) {
+                const nodeData = nodes.get(nodeId);
+                if (!nodeData) return;
+                currentlyEditingItemId = null; // Exit edit mode if any
+
+                detailsTitle.textContent = `Node Detayları (${nodeData.entityType})`;
+                const propertiesHtml = Object.entries(nodeData.properties || {})
+                    .map(([key, value]) => `<li><strong>${key}:</strong> ${value || 'N/A'}</li>`)
+                    .join('') || '<li>Ek özellik yok.</li>';
+
+                detailsContent.innerHTML = `
+                    <p><strong>ID:</strong> ${nodeData.id}</p>
+                    <p><strong>Etiket:</strong> ${nodeData.label}</p>
+                    <div><strong>Özellikler:</strong>
+                        <ul>${propertiesHtml}</ul>
+                    </div>
+                    <button id="edit-node-btn-${nodeId}" class="secondary" style="margin-top: 15px;">✏️ Düzenle</button>
+                    <div id="edit-node-section-${nodeId}" class="edit-section" style="display: none;"></div>
+                `;
+                detailsPanel.classList.add('visible');
+
+                // Add event listener for the newly created edit button
+                document.getElementById(`edit-node-btn-${nodeId}`).addEventListener('click', () => {
+                    showNodeEditForm(nodeId);
+                });
+            }
+
+            function showNodeEditForm(nodeId) {
+                const nodeData = nodes.get(nodeId);
+                if (!nodeData) return;
+                currentlyEditingItemId = nodeId;
+
+                const editSection = document.getElementById(`edit-node-section-${nodeId}`);
+                const editButton = document.getElementById(`edit-node-btn-${nodeId}`);
+                if (!editSection || !editButton) return;
+
+                editButton.style.display = 'none'; // Hide the edit button
+
+                // Basic properties - only Label for now, could expand to others
+                const props = nodeData.properties || {};
+                editSection.innerHTML = `
+                    <h4>Node Düzenle</h4>
+                    <label for="edit-node-label-${nodeId}">Etiket:</label>
+                    <input type="text" id="edit-node-label-${nodeId}" value="${nodeData.label}">
+
+                    <label for="edit-node-desc-${nodeId}">Açıklama:</label>
+                    <textarea id="edit-node-desc-${nodeId}">${props.description || ''}</textarea>
+
+                    <label for="edit-node-source-${nodeId}">Kaynak:</label>
+                    <input type="text" id="edit-node-source-${nodeId}" value="${props.source || ''}">
+
+                    <button id="save-node-changes-${nodeId}">✅ Kaydet</button>
+                    <button id="cancel-node-edit-${nodeId}" class="secondary">❌ İptal</button>
+                `;
+                editSection.style.display = 'block';
+
+                document.getElementById(`save-node-changes-${nodeId}`).addEventListener('click', () => {
+                    const newLabel = document.getElementById(`edit-node-label-${nodeId}`).value.trim();
+                    const newDesc = document.getElementById(`edit-node-desc-${nodeId}`).value.trim();
+                    const newSource = document.getElementById(`edit-node-source-${nodeId}`).value.trim();
+
+                    if (!newLabel) {
+                        showToast('Etiket boş olamaz!', 'error');
+                        return;
+                    }
+                    try {
+                        nodes.update({
+                            id: nodeId,
+                            label: newLabel,
+                            title: `${nodeData.entityType}: ${newLabel}`, // Update tooltip
+                            properties: {
+                                ...props, // Keep existing unrelated props
+                                description: newDesc,
+                                source: newSource
+                            }
+                        });
+                        showToast('Node başarıyla güncellendi.', 'success');
+                        displayNodeDetails(nodeId); // Refresh details view
+                    } catch (err) {
+                        console.error("Node güncelleme hatası:", err);
+                        showToast('Node güncellenemedi: ' + err.message, 'error');
+                    }
+                });
+
+                document.getElementById(`cancel-node-edit-${nodeId}`).addEventListener('click', () => {
+                    displayNodeDetails(nodeId); // Just refresh to hide edit form
+                });
+            }
+
+             function displayEdgeDetails(edgeId) {
+                const edgeData = edges.get(edgeId);
+                if (!edgeData) return;
+                currentlyEditingItemId = null; // Exit edit mode
+
+                const sourceNode = nodes.get(edgeData.from);
+                const targetNode = nodes.get(edgeData.to);
+                const sourceLabel = sourceNode ? `${sourceNode.label} (${sourceNode.entityType})` : `Node ${edgeData.from}`;
+                const targetLabel = targetNode ? `${targetNode.label} (${targetNode.entityType})` : `Node ${edgeData.to}`;
+
+                detailsTitle.textContent = "Edge Detayları";
+                detailsContent.innerHTML = `
+                    <p><strong>ID:</strong> ${edgeData.id}</p>
+                    <p><strong>Kaynak:</strong> ${sourceLabel}</p>
+                    <p><strong>Hedef:</strong> ${targetLabel}</p>
+                    <p><strong>İlişki Tipi:</strong> ${edgeData.label || 'N/A'}</p>
+                    <button id="edit-edge-btn-${edgeId}" class="secondary" style="margin-top: 15px;">✏️ İlişki Tipini Düzenle</button>
+                    <div id="edit-edge-section-${edgeId}" class="edit-section" style="display: none;"></div>
+                `;
+                detailsPanel.classList.add('visible');
+
+                document.getElementById(`edit-edge-btn-${edgeId}`).addEventListener('click', () => {
+                    showEdgeEditForm(edgeId);
+                });
+            }
+
+            function showEdgeEditForm(edgeId) {
+                const edgeData = edges.get(edgeId);
+                if (!edgeData) return;
+                currentlyEditingItemId = edgeId;
+
+                const editSection = document.getElementById(`edit-edge-section-${edgeId}`);
+                const editButton = document.getElementById(`edit-edge-btn-${edgeId}`);
+                if (!editSection || !editButton) return;
+
+                editButton.style.display = 'none'; // Hide edit button
+
+                editSection.innerHTML = `
+                    <h4>İlişki Tipini Düzenle</h4>
+                    <label for="edit-edge-label-${edgeId}">İlişki Tipi:</label>
+                    <input type="text" id="edit-edge-label-${edgeId}" value="${edgeData.label || ''}">
+                    <button id="save-edge-changes-${edgeId}">✅ Kaydet</button>
+                    <button id="cancel-edge-edit-${edgeId}" class="secondary">❌ İptal</button>
+                `;
+                editSection.style.display = 'block';
+
+                 document.getElementById(`save-edge-changes-${edgeId}`).addEventListener('click', () => {
+                    const newLabel = document.getElementById(`edit-edge-label-${edgeId}`).value.trim();
+                    try {
+                        edges.update({
+                            id: edgeId,
+                            label: newLabel || undefined // Use undefined to remove label if empty
+                        });
+                        showToast('İlişki tipi güncellendi.', 'success');
+                        displayEdgeDetails(edgeId); // Refresh details view
+                    } catch (err) {
+                         console.error("Edge güncelleme hatası:", err);
+                         showToast('İlişki tipi güncellenemedi: ' + err.message, 'error');
+                    }
+                 });
+
+                 document.getElementById(`cancel-edge-edit-${edgeId}`).addEventListener('click', () => {
+                    displayEdgeDetails(edgeId); // Refresh to hide form
+                 });
+            }
+
+
+            function hideDetailsPanel() {
+                detailsPanel.classList.remove('visible');
+                detailsTitle.textContent = 'Detaylar';
+                detailsContent.innerHTML = '<p>Detayları görmek için bir node veya edge üzerine tıklayın.</p>';
+                currentlyEditingItemId = null; // Ensure exit from edit mode
+            }
+
+             // Function to save graph data to localStorage
+            function saveGraph() {
+                try {
+                    const graphData = {
+                        nodes: nodes.get({ returnType: 'Object' }), // Get as plain objects
+                        edges: edges.get({ returnType: 'Object' })
+                    };
+                    localStorage.setItem(LOCAL_STORAGE_KEY, JSON.stringify(graphData));
+                    showToast('Grafik başarıyla kaydedildi!', 'success');
+                } catch (error) {
+                    console.error('Grafik kaydedilemedi:', error);
+                    showToast(`Kaydetme hatası: ${error.message}`, 'error');
+                    if (error.name === 'QuotaExceededError') {
+                         showToast('Tarayıcı depolama alanı dolu olabilir.', 'error', 5000);
+                    }
+                }
+            }
+
+            // Function to load graph data from localStorage
+            function loadGraph() {
+                const savedData = localStorage.getItem(LOCAL_STORAGE_KEY);
+                if (savedData) {
+                    if (nodes.length > 0 || edges.length > 0) {
+                       if (!confirm('Mevcut grafik silinip kaydedilmiş veri yüklenecek. Emin misiniz?')) {
+                           return;
+                       }
+                    }
+                    try {
+                        const graphData = JSON.parse(savedData);
+                        nodes.clear();
+                        edges.clear();
+                        // Important: Add data back as arrays, not the raw object from storage
+                        nodes.add(Object.values(graphData.nodes || {}));
+                        edges.add(Object.values(graphData.edges || {}));
+                        network.fit(); // Fit view after loading
+                        hideDetailsPanel();
+                        resetEdgeCreationMode();
+                        clearHighlights();
+                        searchInput.value = '';
+                        showToast('Grafik başarıyla yüklendi.', 'success');
+                    } catch (error) {
+                        console.error('Grafik yüklenemedi:', error);
+                        showToast(`Yükleme hatası: ${error.message}`, 'error');
+                        localStorage.removeItem(LOCAL_STORAGE_KEY); // Remove corrupted data
+                    }
+                } else {
+                    showToast('Kaydedilmiş grafik verisi bulunamadı.', 'info');
+                }
+            }
+
+
+            // --- Graph Initialization ---
+            function initializeGraph() {
+                const container = graphCanvas;
+                const data = { nodes: nodes, edges: edges };
+                const options = {
+                    interaction: {
+                        dragNodes: true, dragView: true, hover: true,
+                        tooltipDelay: 200, zoomView: true, selectConnectedEdges: false // Don't auto-select edges on node click
+                    },
+                    physics: {
+                        enabled: isPhysicsEnabled,
+                        solver: 'barnesHut',
+                        barnesHut: { gravitationalConstant: -10000, springConstant: 0.05, springLength: 180 },
+                        stabilization: { iterations: 150 }
+                    },
+                    nodes: {
+                        shape: 'dot', size: 18,
+                        font: { size: 12, color: '#d4d4d4' },
+                        borderWidth: 2, borderWidthSelected: 4,
+                        shadow: { enabled: true, size: 5, x: 2, y: 2 },
+                        color: { // Default node colors
+                            border: '#2B7CE9',
+                            background: '#97C2FC',
+                            highlight: { border: '#2B7CE9', background: '#D2E5FF' },
+                            hover: { border: '#2B7CE9', background: '#D2E5FF' }
+                        }
+                    },
+                    edges: {
+                        width: 1, widthConstraint: { maximum: 50 },
+                        color: { color:'#848484', highlight:'#ffcc00', hover: '#cccccc', inherit: false },
+                        arrows: { to: { enabled: true, scaleFactor: 0.7 } },
+                        font: { color: '#a0a0a0', size: 10, align: 'middle', strokeWidth: 0 }, // No stroke for edge labels
+                        smooth: { type: 'continuous', roundness: 0.2 } // Continuous often looks good
+                    },
+                    groups: {}, // Populated below
+                    manipulation: false // Use custom UI
+                };
+
+                 Object.entries(entityTypes).forEach(([typeName, config]) => {
+                    options.groups[config.group] = {
+                        color: {
+                            background: config.color, border: config.color,
+                            highlight: { background: lightenColor(config.color, 30), border: lightenColor(config.color, 50) },
+                            hover: { background: lightenColor(config.color, 20), border: lightenColor(config.color, 40) }
+                        },
+                         font: { color: '#FFFFFF' }, // Keep white font
+                         shape: 'icon', // Use icon shape if available
+                         icon: { face: "'FontAwesome'", code: config.icon, size: 25, color: '#fff' } // Basic icon rendering via text
+                         // Note: For real icons, you might need FontAwesome or similar, or use SVG shapes directly
+                    };
+                 });
+
+                network = new vis.Network(container, data, options);
+
+                // --- Network Event Listeners ---
+
+                network.on('click', (params) => {
+                    hideContextMenu();
+                    const clickedNodeIds = params.nodes;
+                    const clickedEdgeIds = params.edges;
+
+                    if (clickedNodeIds.length > 0) {
+                        const clickedNodeId = clickedNodeIds[0];
+
+                        // Clear previous search highlights if clicking a new node
+                        clearHighlights();
+                        searchInput.value = ''; // Clear search box too
+
+                        if (selectedNodeForEdge === null) {
+                             // First click (not in edge creation mode): Initiate edge OR show details
+                            selectedNodeForEdge = clickedNodeId;
+                            edgeModeStatus.textContent = `Kaynak node seçildi: '${nodes.get(clickedNodeId).label}'. Hedef node'u seçin...`;
+                            edgeModeStatus.style.display = 'inline';
+                            cancelEdgeBtn.style.display = 'inline-block';
+                            edgeCreationHelp.textContent = `Kaynak: '${nodes.get(clickedNodeId).label}'. Hedefe tıklayın veya iptal edin.`;
+                            network.selectNodes([clickedNodeId]); // Highlight the selected source node
+                            displayNodeDetails(clickedNodeId); // Show details panel
+
+                        } else if (selectedNodeForEdge !== clickedNodeId) {
+                            // Second click on a DIFFERENT node: Finalize edge creation
+                            const relationshipType = relationshipTypeInput.value.trim() || 'İLGİLİ';
+                            const newEdgeId = generateId();
+                            try {
+                                edges.add({
+                                    id: newEdgeId, from: selectedNodeForEdge, to: clickedNodeId,
+                                    label: relationshipType, arrows: 'to'
+                                });
+                                showToast(`İlişki (${relationshipType}) eklendi.`, 'success');
+                                console.log(`Edge created: ${selectedNodeForEdge} -> ${clickedNodeId} (${relationshipType})`);
+                                resetEdgeCreationMode();
+                            } catch (err) {
+                                console.error("Edge ekleme hatası:", err);
+                                showToast(`Edge eklenemedi: ${err.message}`, 'error');
+                                resetEdgeCreationMode();
+                            }
+                        } else {
+                             // Clicked the same node again - cancel edge mode
+                             resetEdgeCreationMode();
+                             displayNodeDetails(clickedNodeId); // Keep details shown
+                        }
+
+                    } else if (clickedEdgeIds.length > 0) {
+                        // Clicked on an Edge
+                        const clickedEdgeId = clickedEdgeIds[0];
+                        resetEdgeCreationMode(); // Cancel node edge creation if active
+                        clearHighlights(); // Clear search highlights
+                        network.selectEdges([clickedEdgeId]); // Select the edge visually
+                        displayEdgeDetails(clickedEdgeId); // Show edge details
+
+                    } else {
+                        // Clicked on the canvas background
+                        hideDetailsPanel();
+                        resetEdgeCreationMode();
+                        clearHighlights(); // Clear search highlights
+                        searchInput.value = ''; // Clear search box
+                        network.unselectAll(); // Deselect nodes/edges
+                    }
+                });
+
+                network.on('oncontext', (params) => {
+                    params.event.preventDefault();
+                    const nodeId = network.getNodeAt(params.pointer.DOM);
+                    const edgeId = network.getEdgeAt(params.pointer.DOM);
+
+                    if (nodeId) {
+                        lastRightClickedNodeId = nodeId;
+                        // Customize context menu for nodes
+                        document.getElementById('ctx-edit').style.display = 'block';
+                        document.getElementById('ctx-expand').style.display = 'block'; // Show expand for nodes
+
+                        contextMenu.style.top = `${params.pointer.DOM.y}px`;
+                        contextMenu.style.left = `${params.pointer.DOM.x}px`;
+                        contextMenu.style.display = 'block';
+                        network.selectNodes([nodeId]); // Select node on right click
+                    } else if (edgeId) {
+                         lastRightClickedNodeId = null; // Not a node
+                         // Optionally, show a different context menu for edges, or none
+                         // For simplicity, we hide it for now. Can be extended later.
+                         hideContextMenu();
+                         network.selectEdges([edgeId]); // Select edge on right click
+                         displayEdgeDetails(edgeId); // Show details on right click too
+                    } else {
+                        hideContextMenu();
+                         network.unselectAll();
+                    }
+                });
+
+                document.addEventListener('click', (e) => {
+                    if (!contextMenu.contains(e.target)) {
+                        hideContextMenu();
+                    }
+                });
+
+                // Initial load from localStorage
+                loadGraph();
+
+            } // end initializeGraph
+
+            // --- UI Event Listeners ---
+
+            addNodeBtn.addEventListener('click', () => {
+                const type = entityTypeSelect.value;
+                const value = entityValueInput.value.trim();
+                const description = entityDescInput.value.trim();
+                const source = entitySourceInput.value.trim();
+
+                if (!type || !value) {
+                    showToast('Lütfen bir entity tipi seçin ve değer girin.', 'error');
+                    return;
+                }
+
+                const newNodeId = generateId();
+                const groupInfo = entityTypes[type];
+
+                try {
+                    nodes.add({
+                        id: newNodeId, label: value, group: groupInfo.group,
+                        entityType: type, title: `${type}: ${value}`, // Tooltip
+                        properties: { description: description, source: source }
+                    });
+                    showToast(`${type} node'u eklendi: ${value}`, 'info');
+
+                    entityValueInput.value = ''; entityDescInput.value = ''; entitySourceInput.value = '';
+                    entityValueInput.focus();
+                    // network.focus(newNodeId, { scale: network.getScale(), animation: true }); // Focus on new node
+                } catch (err) {
+                     console.error("Node ekleme hatası:", err);
+                     showToast(`Node eklenemedi: ${err.message}`, 'error');
+                }
             });
-        });
 
-        function unmuteee() {
-            $("video").prop('muted', false);
-        }
+            clearGraphBtn.addEventListener('click', () => {
+                if (nodes.length === 0 && edges.length === 0) {
+                     showToast('Grafik zaten boş.', 'info');
+                     return;
+                }
+                if (confirm('Tüm grafiği temizlemek istediğinizden emin misiniz? Bu işlem geri alınamaz.')) {
+                    nodes.clear();
+                    edges.clear();
+                    hideDetailsPanel();
+                    resetEdgeCreationMode();
+                    clearHighlights();
+                    searchInput.value = '';
+                    showToast('Grafik temizlendi.', 'info');
+                }
+            });
+
+            cancelEdgeBtn.addEventListener('click', resetEdgeCreationMode);
+
+            // Search Input Listener
+            searchInput.addEventListener('input', () => {
+                const query = searchInput.value.trim().toLowerCase();
+                clearHighlights(); // Clear previous highlights first
+
+                if (query === '') {
+                    network.unselectAll(); // Deselect if search is cleared
+                    return;
+                }
+
+                const matchingNodeIds = nodes.getIds({
+                    filter: node => node.label.toLowerCase().includes(query) ||
+                                   node.id.toLowerCase().includes(query) ||
+                                   (node.entityType && node.entityType.toLowerCase().includes(query))
+                });
+
+                if (matchingNodeIds.length > 0) {
+                    // Highlight matching nodes
+                    const updates = matchingNodeIds.map(id => ({
+                        id: id,
+                       // Use a distinct highlight style if possible, or rely on selection border
+                       // For simplicity using selection border:
+                       // borderWidth: 4, // Make border thicker
+                       // color: { border: '#ffcc00' } // Change border color - Requires group override or direct node update
+                       // OR add a CSS class and style it (more complex with vis-network rendering)
+                       // Simplest: Just select them
+                    }));
+                     // Instead of direct style update, we use selection which vis-network handles
+                     network.selectNodes(matchingNodeIds);
+                     highlightedNodes = matchingNodeIds; // Store for clearing later
+
+                    // Focus on the first match
+                    network.focus(matchingNodeIds[0], { scale: network.getScale() * 1.2, animation: true }); // Zoom slightly
+                } else {
+                     network.unselectAll(); // No matches found
+                }
+            });
+
+
+            // Save/Load Button Listeners
+            saveGraphBtn.addEventListener('click', saveGraph);
+            loadGraphBtn.addEventListener('click', loadGraph);
+
+            // Physics Toggle Button
+            togglePhysicsBtn.addEventListener('click', () => {
+                 isPhysicsEnabled = !isPhysicsEnabled;
+                 network.setOptions({ physics: { enabled: isPhysicsEnabled } });
+                 togglePhysicsBtn.textContent = isPhysicsEnabled ? '⏸️ Fiziği Durdur' : '▶️ Fiziği Başlat';
+                 showToast(`Fizik motoru ${isPhysicsEnabled ? 'başlatıldı' : 'durduruldu'}.`, 'info');
+            });
+
+
+            // Context Menu Actions
+            document.getElementById('ctx-expand').addEventListener('click', () => {
+                 if (lastRightClickedNodeId) {
+                    console.log(`Simulating expansion for node: ${lastRightClickedNodeId}`);
+                    const sourceNode = nodes.get(lastRightClickedNodeId);
+                    if (!sourceNode) return;
+
+                    // *** IMPROVED FRONTEND SIMULATION ***
+                    const numNewNodes = Math.floor(Math.random() * 3) + 1; // Add 1 to 3 new nodes
+                    const availableTypes = Object.keys(entityTypes);
+                    const possibleRelationships = ['BAĞLANTILI', 'GÖRÜLDÜ', 'ETKİLEŞİMDE', 'SAHİP', 'KULLANDI'];
+
+                    const newNodes = [];
+                    const newEdges = [];
+
+                    for (let i = 0; i < numNewNodes; i++) {
+                        const randomTypeKey = availableTypes[Math.floor(Math.random() * availableTypes.length)];
+                        const simTypeConfig = entityTypes[randomTypeKey];
+                        const simValue = `${sourceNode.label}_sim_${i+1}`;
+                        const simNodeId = generateId();
+
+                        newNodes.push({
+                            id: simNodeId, label: simValue, group: simTypeConfig.group,
+                            entityType: randomTypeKey, title: `${randomTypeKey}: ${simValue} (Simüle)`,
+                            properties: { description: 'Simulated expansion data', source: 'Frontend Simülasyonu' }
+                        });
+
+                        const randomRel = possibleRelationships[Math.floor(Math.random() * possibleRelationships.length)];
+                        newEdges.push({
+                            id: generateId(), from: lastRightClickedNodeId, to: simNodeId,
+                            label: randomRel, arrows: 'to'
+                        });
+
+                        // Randomly connect new nodes to each other sometimes
+                        if (i > 0 && Math.random() > 0.5) {
+                             const randomPrevNode = newNodes[Math.floor(Math.random() * i)];
+                             const randomRel2 = possibleRelationships[Math.floor(Math.random() * possibleRelationships.length)];
+                             newEdges.push({
+                                id: generateId(), from: simNodeId, to: randomPrevNode.id,
+                                label: randomRel2, arrows: 'to'
+                            });
+                        }
+                    }
+                    try {
+                        nodes.add(newNodes);
+                        edges.add(newEdges);
+                         showToast(`${numNewNodes} adet simüle node/ilişki eklendi.`, 'info');
+                         // Optional: briefly highlight new nodes/edges
+                         network.selectNodes(newNodes.map(n => n.id));
+                         setTimeout(() => network.unselectAll(), 1500); // Deselect after a bit
+                    } catch (err) {
+                         console.error("Simülasyon hatası:", err);
+                         showToast(`Simülasyon hatası: ${err.message}`, 'error');
+                    }
+                    // *** END OF SIMULATION ***
+                }
+                hideContextMenu();
+            });
+
+             document.getElementById('ctx-edit').addEventListener('click', () => {
+                 if (lastRightClickedNodeId) {
+                     displayNodeDetails(lastRightClickedNodeId); // Ensure details panel is visible
+                     showNodeEditForm(lastRightClickedNodeId); // Then trigger edit mode
+                 }
+                 hideContextMenu();
+             });
+
+
+            document.getElementById('ctx-details').addEventListener('click', () => {
+                if (lastRightClickedNodeId) {
+                    displayNodeDetails(lastRightClickedNodeId);
+                    network.focus(lastRightClickedNodeId, { animation: true });
+                }
+                hideContextMenu();
+            });
+
+            document.getElementById('ctx-delete').addEventListener('click', () => {
+                if (lastRightClickedNodeId) {
+                     const nodeToDelete = nodes.get(lastRightClickedNodeId);
+                     if (!nodeToDelete) { hideContextMenu(); return; }
+
+                     if (confirm(`"${nodeToDelete.label}" node'unu ve bağlı tüm ilişkileri silmek istediğinizden emin misiniz?`)) {
+                        // Find connected edges BEFORE removing the node
+                        const connectedEdges = edges.get({
+                            filter: edge => edge.from === lastRightClickedNodeId || edge.to === lastRightClickedNodeId
+                        });
+                        const edgeIdsToRemove = connectedEdges.map(edge => edge.id);
+
+                        try {
+                            // Remove edges first, then node
+                            if (edgeIdsToRemove.length > 0) edges.remove(edgeIdsToRemove);
+                            nodes.remove(lastRightClickedNodeId);
+
+                            if (selectedNodeForEdge === lastRightClickedNodeId) resetEdgeCreationMode();
+                            if (currentlyEditingItemId === lastRightClickedNodeId) hideDetailsPanel();
+                            else if (detailsPanel.classList.contains('visible')) {
+                                // Check if deleted node details were shown
+                                const displayedIdParagraph = detailsContent.querySelector('p:first-child');
+                                if (displayedIdParagraph && displayedIdParagraph.textContent.includes(lastRightClickedNodeId)) {
+                                     hideDetailsPanel();
+                                }
+                            }
+                             showToast(`Node "${nodeToDelete.label}" ve ${edgeIdsToRemove.length} ilişki silindi.`, 'info');
+                             console.log(`Node ${lastRightClickedNodeId} and ${edgeIdsToRemove.length} edge(s) deleted.`);
+                        } catch (err) {
+                             console.error("Silme hatası:", err);
+                             showToast(`Silme hatası: ${err.message}`, 'error');
+                        }
+                    }
+                }
+                hideContextMenu();
+            });
+
+
+            // --- Initialization Calls ---
+            populateEntityTypes();
+            initializeGraph();
+            console.log("Gelişmiş OSINT Grafik Aracı Başlatıldı.");
+
+
+            // --- Utility Functions ---
+            function lightenColor(hex, percent) {
+                // (Same function as before)
+                hex = hex.replace(/^\s*#|\s*$/g, '');
+                if (hex.length === 3) hex = hex.replace(/(.)/g, '$1$1');
+                let r = parseInt(hex.substring(0, 2), 16),
+                    g = parseInt(hex.substring(2, 4), 16),
+                    b = parseInt(hex.substring(4, 6), 16);
+                const factor = 1 + (percent / 100);
+                r = Math.min(255, Math.round(r * factor));
+                g = Math.min(255, Math.round(g * factor));
+                b = Math.min(255, Math.round(b * factor));
+                return `#${(r).toString(16).padStart(2, '0')}${(g).toString(16).padStart(2, '0')}${(b).toString(16).padStart(2, '0')}`;
+            }
+
+        }); // End DOMContentLoaded
     </script>
+
 </body>
 </html>
