@@ -1,0 +1,177 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pricing - Osinters Platform</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&display=swap');
+
+        body {
+            font-family: 'Space Grotesk', sans-serif;
+            background-color: #0a0a0a;
+            color: #e2e8f0;
+            overflow-x: hidden;
+        }
+
+        ::selection {
+            background-color: #8b5cf6; /* Purple accent */
+            color: #ffffff; /* White text */
+        }
+        ::-moz-selection { /* Firefox */
+            background-color: #8b5cf6;
+            color: #ffffff;
+        }
+
+        .glow-text {
+            text-shadow: 0 0 8px rgba(132, 94, 242, 0.8);
+        }
+
+        .nav-link::after {
+            content: '';
+            display: block;
+            width: 0;
+            height: 2px;
+            background: #8b5cf6;
+            transition: width 0.3s;
+        }
+
+        .nav-link:hover::after {
+            width: 100%;
+        }
+        .pricing-card {
+            border: 1px solid #374151; /* border-gray-700 */
+            transition: all 0.3s ease;
+        }
+        .pricing-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 25px rgba(132, 94, 242, 0.3); /* glow-box like */
+        }
+    </style>
+</head>
+<body>
+    <div class="page-wrapper min-h-screen flex flex-col">
+        <!-- Header -->
+        <header class="bg-gray-900/80 backdrop-blur-md border-b border-gray-800 fixed w-full z-50">
+            <div class="container mx-auto px-6 py-4">
+                <div class="flex justify-between items-center">
+                    <div class="flex items-center space-x-2">
+                        <i class="fas fa-bug text-purple-500 text-2xl"></i>
+                        <span class="text-xl font-bold bg-gradient-to-r from-purple-500 to-pink-500 bg-clip-text text-transparent">Osinters</span>
+                    </div>
+                    <nav class="hidden md:flex space-x-8">
+                        <a href="osint.html" class="nav-link text-gray-300 hover:text-white transition">Home</a>
+                        <a href="services.html" class="nav-link text-gray-300 hover:text-white transition">Services</a>
+                        <a href="features.html" class="nav-link text-gray-300 hover:text-white transition">Features</a>
+                        <a href="pricing.html" class="nav-link text-gray-300 hover:text-white transition">Pricing</a>
+                        <a href="contact.html" class="nav-link text-gray-300 hover:text-white transition">Contact</a>
+                    </nav>
+                    <div class="flex items-center space-x-4">
+                        <a href="login.html" class="px-4 py-2 rounded-full text-sm font-medium bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700 text-white transition-all transform hover:scale-105 active:scale-95 focus:outline-none focus:ring-2 focus:ring-purple-500 focus:ring-offset-2 focus:ring-offset-gray-900/80">
+                            Sign In
+                        </a>
+                        <button class="md:hidden text-gray-300">
+                            <i class="fas fa-bars text-xl"></i>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </header>
+
+        <!-- Main Content Section -->
+        <main class="pt-24 pb-12 flex-grow">
+            <div class="container mx-auto px-6 py-10">
+                <div class="max-w-3xl mx-auto text-center mb-12">
+                    <h1 class="text-4xl md:text-5xl font-bold mb-6 glow-text">
+                        <span class="bg-gradient-to-r from-purple-400 to-pink-400 bg-clip-text text-transparent">Flexible Pricing Plans</span>
+                    </h1>
+                    <p class="text-lg md:text-xl text-gray-300 mb-8 leading-relaxed">
+                        Choose the plan that best fits your OSINT needs. All plans come with our core features and dedicated support.
+                    </p>
+                </div>
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+                    <!-- Pricing Card 1: Basic -->
+                    <div class="pricing-card bg-gray-800/50 p-8 rounded-xl text-center">
+                        <h3 class="text-2xl font-bold text-purple-400 mb-4">Basic</h3>
+                        <p class="text-4xl font-extrabold mb-2">$29<span class="text-xl font-normal text-gray-400">/mo</span></p>
+                        <p class="text-gray-400 mb-6">For individuals and small teams.</p>
+                        <ul class="space-y-2 text-gray-300 mb-8"><li><i class="fas fa-check text-green-500 mr-2"></i>Core OSINT Tools</li><li><i class="fas fa-check text-green-500 mr-2"></i>Limited Data Sources</li><li><i class="fas fa-check text-green-500 mr-2"></i>Basic Reporting</li></ul>
+                        <button class="w-full px-6 py-3 rounded-lg font-semibold bg-purple-600 hover:bg-purple-700 text-white transition-all">Get Started</button>
+                    </div>
+                    <!-- Pricing Card 2: Pro (Popular) -->
+                    <div class="pricing-card bg-gray-800 p-8 rounded-xl text-center relative border-2 border-pink-500">
+                        <div class="absolute top-0 left-1/2 transform -translate-x-1/2 -translate-y-1/2 bg-pink-500 text-white px-3 py-1 text-sm font-semibold rounded-full">Popular</div>
+                        <h3 class="text-2xl font-bold text-pink-400 mb-4 mt-3">Pro</h3>
+                        <p class="text-4xl font-extrabold mb-2">$79<span class="text-xl font-normal text-gray-400">/mo</span></p>
+                        <p class="text-gray-400 mb-6">For professionals and growing teams.</p>
+                        <ul class="space-y-2 text-gray-300 mb-8"><li><i class="fas fa-check text-green-500 mr-2"></i>All Basic Features</li><li><i class="fas fa-check text-green-500 mr-2"></i>Extended Data Sources</li><li><i class="fas fa-check text-green-500 mr-2"></i>Advanced Analytics & API Access</li></ul>
+                        <button class="w-full px-6 py-3 rounded-lg font-semibold bg-pink-600 hover:bg-pink-700 text-white transition-all">Choose Pro</button>
+                    </div>
+                    <!-- Pricing Card 3: Enterprise -->
+                    <div class="pricing-card bg-gray-800/50 p-8 rounded-xl text-center">
+                        <h3 class="text-2xl font-bold text-blue-400 mb-4">Enterprise</h3>
+                        <p class="text-4xl font-extrabold mb-2">Custom</p>
+                        <p class="text-gray-400 mb-6">For large organizations with specific needs.</p>
+                        <ul class="space-y-2 text-gray-300 mb-8"><li><i class="fas fa-check text-green-500 mr-2"></i>All Pro Features</li><li><i class="fas fa-check text-green-500 mr-2"></i>Custom Integrations</li><li><i class="fas fa-check text-green-500 mr-2"></i>Dedicated Support & SLA</li></ul>
+                        <button class="w-full px-6 py-3 rounded-lg font-semibold bg-blue-600 hover:bg-blue-700 text-white transition-all">Contact Us</button>
+                    </div>
+                </div>
+            </div>
+        </main>
+
+        <!-- Footer -->
+        <footer class="bg-gray-900/80 border-t border-gray-800 py-12">
+            <div class="container mx-auto px-6">
+                <div class="grid grid-cols-1 md:grid-cols-4 gap-8">                    <div><div class="flex items-center space-x-2 mb-4"><i class="fas fa-bug text-purple-500 text-2xl"></i><span class="text-xl font-bold bg-gradient-to-r from-purple-500 to-pink-500 bg-clip-text text-transparent">Osinters</span></div><p class="text-gray-400 mb-4">Advanced open-source intelligence platform for professionals.</p><div class="flex space-x-4"><a href="#" class="text-gray-400 hover:text-purple-400 transform hover:scale-125 transition-all duration-200 ease-in-out"><i class="fab fa-twitter"></i></a><a href="#" class="text-gray-400 hover:text-purple-400 transform hover:scale-125 transition-all duration-200 ease-in-out"><i class="fab fa-github"></i></a><a href="#" class="text-gray-400 hover:text-purple-400 transform hover:scale-125 transition-all duration-200 ease-in-out"><i class="fab fa-linkedin"></i></a><a href="#" class="text-gray-400 hover:text-purple-400 transform hover:scale-125 transition-all duration-200 ease-in-out"><i class="fab fa-discord"></i></a></div></div>
+                    <div><h3 class="text-lg font-semibold text-white mb-4">Product</h3><ul class="space-y-2"><li><a href="features.html" class="text-gray-400 hover:text-purple-400 hover:translate-x-1 transform transition-all duration-200 ease-in-out block">Features</a></li><li><a href="pricing.html" class="text-gray-400 hover:text-purple-400 hover:translate-x-1 transform transition-all duration-200 ease-in-out block">Pricing</a></li><li><a href="api-docs.html" class="text-gray-400 hover:text-purple-400 hover:translate-x-1 transform transition-all duration-200 ease-in-out block">API</a></li><li><a href="integrations.html" class="text-gray-400 hover:text-purple-400 hover:translate-x-1 transform transition-all duration-200 ease-in-out block">Integrations</a></li></ul></div>
+                    <div><h3 class="text-lg font-semibold text-white mb-4">Resources</h3><ul class="space-y-2"><li><a href="documentation.html" class="text-gray-400 hover:text-purple-400 hover:translate-x-1 transform transition-all duration-200 ease-in-out block">Documentation</a></li><li><a href="guides.html" class="text-gray-400 hover:text-purple-400 hover:translate-x-1 transform transition-all duration-200 ease-in-out block">Guides</a></li><li><a href="blog.html" class="text-gray-400 hover:text-purple-400 hover:translate-x-1 transform transition-all duration-200 ease-in-out block">Blog</a></li><li><a href="support.html" class="text-gray-400 hover:text-purple-400 hover:translate-x-1 transform transition-all duration-200 ease-in-out block">Support</a></li></ul></div>
+                    <div><h3 class="text-lg font-semibold text-white mb-4">Company</h3><ul class="space-y-2"><li><a href="about.html" class="text-gray-400 hover:text-purple-400 hover:translate-x-1 transform transition-all duration-200 ease-in-out block">About</a></li><li><a href="careers.html" class="text-gray-400 hover:text-purple-400 hover:translate-x-1 transform transition-all duration-200 ease-in-out block">Careers</a></li><li><a href="privacy.html" class="text-gray-400 hover:text-purple-400 hover:translate-x-1 transform transition-all duration-200 ease-in-out block">Privacy</a></li><li><a href="terms.html" class="text-gray-400 hover:text-purple-400 hover:translate-x-1 transform transition-all duration-200 ease-in-out block">Terms</a></li></ul></div>
+                </div>
+                <div class="border-t border-gray-800 mt-12 pt-8 flex flex-col md:flex-row justify-between items-center"><p class="text-gray-500 text-sm mb-4 md:mb-0">© 2023 Osinters. All rights reserved.</p><div class="flex space-x-6"><a href="privacy.html" class="text-gray-500 hover:text-purple-400 text-sm transition-colors duration-200 ease-in-out">Privacy Policy</a><a href="terms.html" class="text-gray-500 hover:text-purple-400 text-sm transition-colors duration-200 ease-in-out">Terms of Service</a><a href="cookie-policy.html" class="text-gray-500 hover:text-purple-400 text-sm transition-colors duration-200 ease-in-out">Cookie Policy</a></div></div>
+            </div>
+        </footer>
+    </div>
+
+    <script>
+        function setupMobileMenu() {
+            const menuButton = document.querySelector('header button:last-child');
+            const nav = document.querySelector('header nav');
+            menuButton.addEventListener('click', () => {
+                nav.classList.toggle('hidden');
+                nav.classList.toggle('flex');
+                nav.classList.toggle('flex-col');
+                nav.classList.toggle('absolute');
+                nav.classList.toggle('top-16');
+                nav.classList.toggle('left-0');
+                nav.classList.toggle('right-0');
+                nav.classList.toggle('bg-gray-900');
+                nav.classList.toggle('p-4');
+                nav.classList.toggle('space-y-4');
+                nav.classList.toggle('border-t');
+                nav.classList.toggle('border-gray-800');
+            });
+        }
+
+        function setupSmoothScrolling() {
+            document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+                anchor.addEventListener('click', function (e) {
+                    e.preventDefault();
+                    const targetId = this.getAttribute('href');
+                    if (targetId === '#') return;
+                    const targetElement = document.querySelector(targetId);
+                    if (targetElement) {
+                        targetElement.scrollIntoView({ behavior: 'smooth' });
+                    }
+                });
+            });
+        }
+
+        document.addEventListener('DOMContentLoaded', () => {
+            setupMobileMenu();
+            setupSmoothScrolling();
+        });
+    </script>
+</body>
+</html>

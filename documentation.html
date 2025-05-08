@@ -1,0 +1,170 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Documentation - Osinters Platform</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&display=swap');
+
+        body {
+            font-family: 'Space Grotesk', sans-serif;
+            background-color: #0a0a0a;
+            color: #e2e8f0;
+            overflow-x: hidden;
+        }
+
+        ::selection {
+            background-color: #8b5cf6; /* Purple accent */
+            color: #ffffff; /* White text */
+        }
+        ::-moz-selection { /* Firefox */
+            background-color: #8b5cf6;
+            color: #ffffff;
+        }
+
+        .glow-text {
+            text-shadow: 0 0 8px rgba(132, 94, 242, 0.8);
+        }
+
+        .nav-link::after {
+            content: '';
+            display: block;
+            width: 0;
+            height: 2px;
+            background: #8b5cf6;
+            transition: width 0.3s;
+        }
+
+        .nav-link:hover::after {
+            width: 100%;
+        }
+        .content-section {
+            background-color: #111827; /* bg-gray-900 slightly lighter */
+            border: 1px solid #374151; /* border-gray-700 */
+            border-radius: 0.75rem; /* rounded-xl */
+            padding: 1.5rem; /* p-6 */
+            margin-bottom: 2rem; /* mb-8 */
+        }
+        .content-section h2 {
+            font-size: 1.5rem; /* text-2xl */
+            font-weight: bold;
+            color: #a78bfa; /* purple-400 */
+            margin-bottom: 1rem; /* mb-4 */
+            border-bottom: 1px solid #4b5563; /* border-gray-600 */
+            padding-bottom: 0.5rem; /* pb-2 */
+        }
+        .content-section p {
+            color: #cbd5e1; /* slate-300 */
+            line-height: 1.75; /* leading-relaxed */
+        }
+    </style>
+</head>
+<body>
+    <div class="page-wrapper min-h-screen flex flex-col">
+        <!-- Header -->
+        <header class="bg-gray-900/80 backdrop-blur-md border-b border-gray-800 fixed w-full z-50">
+            <div class="container mx-auto px-6 py-4">
+                <div class="flex justify-between items-center">
+                    <div class="flex items-center space-x-2 transition-transform duration-300 ease-in-out hover:scale-105">
+                        <i class="fas fa-bug text-purple-500 text-2xl "></i>
+                        <span class="text-xl font-bold bg-gradient-to-r from-purple-500 to-pink-500 bg-clip-text text-transparent">Osinters</span>
+                    </div>
+                    <nav class="hidden md:flex space-x-8">
+                        <a href="osint.html" class="nav-link text-gray-300 hover:text-white transition">Home</a>
+                        <a href="services.html" class="nav-link text-gray-300 hover:text-white transition">Services</a>
+                        <a href="features.html" class="nav-link text-gray-300 hover:text-white transition">Features</a>
+                        <a href="pricing.html" class="nav-link text-gray-300 hover:text-white transition">Pricing</a>
+                        <a href="contact.html" class="nav-link text-gray-300 hover:text-white transition">Contact</a>
+                    </nav>
+                    <div class="flex items-center space-x-4">
+                        <a href="login.html" class="px-4 py-2 rounded-full text-sm font-medium bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700 text-white transition-all transform hover:scale-105 active:scale-95 focus:outline-none focus:ring-2 focus:ring-purple-500 focus:ring-offset-2 focus:ring-offset-gray-900/80">
+                            Sign In
+                        </a>
+                        <button class="md:hidden text-gray-300 hover:text-purple-400 transition-colors duration-300 active:scale-90">
+                            <i class="fas fa-bars text-xl"></i>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </header>
+
+        <!-- Main Content Section -->
+        <main class="pt-24 pb-12 flex-grow">
+            <div class="container mx-auto px-6 py-10">
+                <div class="max-w-4xl mx-auto">
+                    <div class="text-center mb-12">
+                        <h1 class="text-4xl md:text-5xl font-bold mb-6 glow-text">
+                            <span class="bg-gradient-to-r from-purple-400 to-pink-400 bg-clip-text text-transparent">Platform Documentation</span>
+                        </h1>
+                        <p class="text-lg md:text-xl text-gray-300 leading-relaxed">
+                            Explore our comprehensive documentation to get the most out of Osinters. Find setup guides, feature explanations, API references, and troubleshooting tips.
+                        </p>
+                    </div>
+
+                    <section class="content-section">
+                        <h2>Getting Started</h2>
+                        <p>New to Osinters? This section will guide you through account setup, initial configuration, and your first investigation. Learn the basics and start uncovering insights quickly.</p>
+                    </section>
+
+                    <section class="content-section">
+                        <h2>Core Features Explained</h2>
+                        <p>Dive deep into the powerful features of Osinters. Understand how to use our advanced data collection, link analysis, customizable dashboards, and reporting tools effectively.</p>
+                    </section>
+
+                    <section class="content-section">
+                        <h2>API Reference</h2>
+                        <p>For developers, our API reference provides all the details needed to integrate Osinters capabilities into your own applications. Check out the <a href="api-docs.html" class="text-purple-400 hover:text-purple-300 underline">full API Documentation</a> for endpoints, authentication, and examples.</p>
+                    </section>
+
+                    <section class="content-section">
+                        <h2>Troubleshooting & FAQs</h2>
+                        <p>Encountering an issue or have a question? Our troubleshooting guide and frequently asked questions section might have the answer you're looking for. For further assistance, visit our <a href="support.html" class="text-purple-400 hover:text-purple-300 underline">Support page</a>.</p>
+                    </section>
+                </div>
+            </div>
+        </main>
+
+        <!-- Footer -->
+        <footer class="bg-gray-900/80 border-t border-gray-800 py-12">
+            <div class="container mx-auto px-6">
+                <div class="grid grid-cols-1 md:grid-cols-4 gap-8">                    <div><div class="flex items-center space-x-2 mb-4"><i class="fas fa-bug text-purple-500 text-2xl"></i><span class="text-xl font-bold bg-gradient-to-r from-purple-500 to-pink-500 bg-clip-text text-transparent">Osinters</span></div><p class="text-gray-400 mb-4">Advanced open-source intelligence platform for professionals.</p><div class="flex space-x-4"><a href="#" class="text-gray-400 hover:text-purple-400 transform hover:scale-125 transition-all duration-200 ease-in-out"><i class="fab fa-twitter"></i></a><a href="#" class="text-gray-400 hover:text-purple-400 transform hover:scale-125 transition-all duration-200 ease-in-out"><i class="fab fa-github"></i></a><a href="#" class="text-gray-400 hover:text-purple-400 transform hover:scale-125 transition-all duration-200 ease-in-out"><i class="fab fa-linkedin"></i></a><a href="#" class="text-gray-400 hover:text-purple-400 transform hover:scale-125 transition-all duration-200 ease-in-out"><i class="fab fa-discord"></i></a></div></div>
+                    <div><h3 class="text-lg font-semibold text-white mb-4">Product</h3><ul class="space-y-2"><li><a href="features.html" class="text-gray-400 hover:text-purple-400 hover:translate-x-1 transform transition-all duration-200 ease-in-out block">Features</a></li><li><a href="pricing.html" class="text-gray-400 hover:text-purple-400 hover:translate-x-1 transform transition-all duration-200 ease-in-out block">Pricing</a></li><li><a href="api-docs.html" class="text-gray-400 hover:text-purple-400 hover:translate-x-1 transform transition-all duration-200 ease-in-out block">API</a></li><li><a href="integrations.html" class="text-gray-400 hover:text-purple-400 hover:translate-x-1 transform transition-all duration-200 ease-in-out block">Integrations</a></li></ul></div>
+                    <div><h3 class="text-lg font-semibold text-white mb-4">Resources</h3><ul class="space-y-2"><li><a href="documentation.html" class="text-gray-400 hover:text-purple-400 hover:translate-x-1 transform transition-all duration-200 ease-in-out block">Documentation</a></li><li><a href="guides.html" class="text-gray-400 hover:text-purple-400 hover:translate-x-1 transform transition-all duration-200 ease-in-out block">Guides</a></li><li><a href="blog.html" class="text-gray-400 hover:text-purple-400 hover:translate-x-1 transform transition-all duration-200 ease-in-out block">Blog</a></li><li><a href="support.html" class="text-gray-400 hover:text-purple-400 hover:translate-x-1 transform transition-all duration-200 ease-in-out block">Support</a></li></ul></div>
+                    <div><h3 class="text-lg font-semibold text-white mb-4">Company</h3><ul class="space-y-2"><li><a href="about.html" class="text-gray-400 hover:text-purple-400 hover:translate-x-1 transform transition-all duration-200 ease-in-out block">About</a></li><li><a href="careers.html" class="text-gray-400 hover:text-purple-400 hover:translate-x-1 transform transition-all duration-200 ease-in-out block">Careers</a></li><li><a href="privacy.html" class="text-gray-400 hover:text-purple-400 hover:translate-x-1 transform transition-all duration-200 ease-in-out block">Privacy</a></li><li><a href="terms.html" class="text-gray-400 hover:text-purple-400 hover:translate-x-1 transform transition-all duration-200 ease-in-out block">Terms</a></li></ul></div>
+                </div>
+                <div class="border-t border-gray-800 mt-12 pt-8 flex flex-col md:flex-row justify-between items-center"><p class="text-gray-500 text-sm mb-4 md:mb-0">© 2023 Osinters. All rights reserved.</p><div class="flex space-x-6"><a href="privacy.html" class="text-gray-500 hover:text-purple-400 text-sm transition-colors duration-200 ease-in-out">Privacy Policy</a><a href="terms.html" class="text-gray-500 hover:text-purple-400 text-sm transition-colors duration-200 ease-in-out">Terms of Service</a><a href="cookie-policy.html" class="text-gray-500 hover:text-purple-400 text-sm transition-colors duration-200 ease-in-out">Cookie Policy</a></div></div>
+            </div>
+        </footer>
+    </div>
+
+    <script>
+        function setupMobileMenu() {
+            const menuButton = document.querySelector('header button:last-child');
+            const nav = document.querySelector('header nav');
+            menuButton.addEventListener('click', () => {
+                nav.classList.toggle('hidden');nav.classList.toggle('flex');nav.classList.toggle('flex-col');nav.classList.toggle('absolute');nav.classList.toggle('top-16');nav.classList.toggle('left-0');nav.classList.toggle('right-0');nav.classList.toggle('bg-gray-900');nav.classList.toggle('p-4');nav.classList.toggle('space-y-4');nav.classList.toggle('border-t');nav.classList.toggle('border-gray-800');
+            });
+        }
+        function setupSmoothScrolling() {
+            document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+                anchor.addEventListener('click', function (e) {
+                    e.preventDefault();
+                    const targetId = this.getAttribute('href');
+                    if (targetId === '#') return;
+                    const targetElement = document.querySelector(targetId);
+                    if (targetElement) {
+                        targetElement.scrollIntoView({ behavior: 'smooth' });
+                    }
+                });
+            });
+        }
+        document.addEventListener('DOMContentLoaded', () => {
+            setupMobileMenu();
+            setupSmoothScrolling();
+        });
+    </script>
+</body>
+</html>

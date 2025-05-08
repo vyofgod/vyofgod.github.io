@@ -1,0 +1,183 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Integrations - Osinters Platform</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&display=swap');
+
+        body {
+            font-family: 'Space Grotesk', sans-serif;
+            background-color: #0a0a0a;
+            color: #e2e8f0;
+            overflow-x: hidden;
+        }
+
+        .glow-text {
+            text-shadow: 0 0 8px rgba(132, 94, 242, 0.8);
+        }
+
+        .nav-link::after {
+            content: '';
+            display: block;
+            width: 0;
+            height: 2px;
+            background: #8b5cf6;
+            transition: width 0.3s;
+        }
+
+        .nav-link:hover::after {
+            width: 100%;
+        }
+        .content-section {
+            background-color: #111827; /* bg-gray-900 slightly lighter */
+            border: 1px solid #374151; /* border-gray-700 */
+            border-radius: 0.75rem; /* rounded-xl */
+            padding: 1.5rem; /* p-6 */
+            margin-bottom: 1.5rem; /* mb-6 */
+        }
+        .content-section h2 {
+            font-size: 1.25rem; /* text-xl */
+            font-weight: bold;
+            color: #a78bfa; /* purple-400 */
+            margin-bottom: 0.75rem; /* mb-3 */
+        }
+        .content-section p, .content-section li {
+            color: #cbd5e1; /* slate-300 */
+            line-height: 1.75; /* leading-relaxed */
+            margin-bottom: 0.5rem;
+        }
+        .content-section ul {
+            list-style-type: disc;
+            padding-left: 1.5rem; /* pl-6 */
+        }
+    </style>
+</head>
+<body>
+    <div class="page-wrapper min-h-screen flex flex-col">
+        <!-- Header -->
+        <header class="bg-gray-900/80 backdrop-blur-md border-b border-gray-800 fixed w-full z-50">
+            <div class="container mx-auto px-6 py-4">
+                <div class="flex justify-between items-center">
+                    <a href="osint.html" aria-label="OSINTPlus Homepage">
+                        <div class="flex items-center space-x-2 transition-transform duration-300 ease-in-out hover:scale-105">
+                            <i class="fas fa-bug text-purple-500 text-2xl "></i>
+                            <span class="text-xl font-bold bg-gradient-to-r from-purple-500 to-pink-500 bg-clip-text text-transparent">Osinters</span>
+                        </div>
+                    </a>
+                    <nav class="hidden md:flex space-x-8">
+                        <a href="osint.html" class="nav-link text-gray-300 hover:text-white transition">Home</a>
+                        <a href="services.html" class="nav-link text-gray-300 hover:text-white transition">Services</a>
+                        <a href="features.html" class="nav-link text-gray-300 hover:text-white transition">Features</a>
+                        <a href="pricing.html" class="nav-link text-gray-300 hover:text-white transition">Pricing</a>
+                        <a href="contact.html" class="nav-link text-gray-300 hover:text-white transition">Contact</a>
+                    </nav>
+                    <div class="flex items-center space-x-4">
+                        <a href="login.html" class="px-4 py-2 rounded-full text-sm font-medium bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700 text-white transition-all transform hover:scale-105 active:scale-95 focus:outline-none focus:ring-2 focus:ring-purple-500 focus:ring-offset-2 focus:ring-offset-gray-900/80">
+                            Sign In
+                        </a>
+                        <button class="md:hidden text-gray-300 hover:text-purple-400 transition-colors duration-300 active:scale-90">
+                            <i class="fas fa-bars text-xl"></i>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </header>
+
+        <!-- Main Content Section -->
+        <main class="pt-24 pb-12 flex-grow">
+            <div class="container mx-auto px-6 py-10">
+                <div class="max-w-3xl mx-auto">
+                    <div class="text-center mb-12">
+                        <h1 class="text-4xl md:text-5xl font-bold mb-6 glow-text">
+                            <span class="bg-gradient-to-r from-purple-400 to-pink-400 bg-clip-text text-transparent">Platform Integrations</span>
+                        </h1>
+                        <p class="text-md text-gray-400">Seamlessly connect Osinters with your favorite tools and data sources.</p>
+                    </div>
+
+                    <div class="content-section">
+                        <h2>Our Integration Philosophy</h2>
+                        <p>Osinters is designed to be a central hub for your open-source intelligence activities. We believe in the power of interoperability and strive to make it easy for you to connect our platform with the other tools and services you rely on. This allows for a more streamlined workflow and enhances your investigative capabilities.</p>
+                    </div>
+
+                    <div class="content-section">
+                        <h2>Available Integrations</h2>
+                        <p>We are constantly expanding our list of integrations. Here are some of the key categories and examples:</p>
+                        <ul>
+                            <li><strong>Data Enrichment Services:</strong> Connect to services that provide additional context and data points for your findings (e.g., IP geolocation, domain reputation).</li>
+                            <li><strong>Threat Intelligence Platforms:</strong> Feed your OSINT findings into your existing TIPs or pull threat actor information into Osinters.</li>
+                            <li><strong>Case Management Systems:</strong> Export structured data from Osinters directly into your case management software.</li>
+                            <li><strong>Custom API Access:</strong> Utilize our API to build custom integrations tailored to your specific needs.</li>
+                            <li><strong>Browser Extensions:</strong> Leverage our browser extensions for quick information gathering and integration with web-based sources.</li>
+                        </ul>
+                        <p>For a detailed list of currently supported integrations and setup guides, please visit our <a href="contact.html" class="text-purple-400 hover:underline">developer portal</a> or contact our support team.</p>
+                    </div>
+
+                    <div class="content-section">
+                        <h2>Requesting New Integrations</h2>
+                        <p>Is there a tool or service you'd like to see integrated with Osinters? We'd love to hear from you! Please submit your integration requests through our <a href="contact.html" class="text-purple-400 hover:underline">contact page</a> or community forum.</p>
+                    </div>
+                </div>
+            </div>
+        </main>
+
+        <!-- Footer -->
+        <footer class="bg-gray-900/80 border-t border-gray-800 py-12">
+            <div class="container mx-auto px-6">
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8 text-gray-400">
+                    <div>
+                        <div class="flex items-center space-x-2 mb-3">
+                            <i class="fas fa-bug text-purple-500 text-xl"></i>
+                            <span class="text-lg font-bold bg-gradient-to-r from-purple-500 to-pink-500 bg-clip-text text-transparent">Osinters</span>
+                        </div>
+                        <p class="text-sm">Empowering your investigations with cutting-edge open-source intelligence tools.</p>
+                    </div>
+                    <div>
+                        <h5 class="font-semibold text-white mb-3">Product</h5>
+                        <ul class="space-y-2 text-sm">
+                            <li><a href="features.html" class="hover:text-purple-400 transition-colors">Features</a></li>
+                            <li><a href="integrations.html" class="hover:text-purple-400 transition-colors">Integrations</a></li>
+                            <li><a href="pricing.html" class="hover:text-purple-400 transition-colors">Pricing</a></li>
+                            <li><a href="osint.html#faq" class="hover:text-purple-400 transition-colors">FAQ</a></li>
+                        </ul>
+                    </div>
+                    <div>
+                        <h5 class="font-semibold text-white mb-3">Company</h5>
+                        <ul class="space-y-2 text-sm">
+                            <li><a href="about.html" class="hover:text-purple-400 transition-colors">About Us</a></li>
+                            <li><a href="contact.html" class="hover:text-purple-400 transition-colors">Contact</a></li>
+                        </ul>
+                    </div>
+                    <div>
+                        <h5 class="font-semibold text-white mb-3">Legal</h5>
+                        <ul class="space-y-2 text-sm">
+                            <li><a href="privacy.html" class="hover:text-purple-400 transition-colors">Privacy Policy</a></li>
+                            <li><a href="terms.html" class="hover:text-purple-400 transition-colors">Terms of Service</a></li>
+                        </ul>
+                    </div>
+                </div>
+                <div class="mt-8 pt-8 border-t border-gray-700 text-center text-sm text-gray-500">
+                    <p>&copy; 2023 Osinters. All rights reserved.</p>
+                </div>
+            </div>
+        </footer>
+    </div>
+
+    <script>
+        // Mobile menu script
+        function setupMobileMenu() {
+            const menuButton = document.querySelector('header button:last-child');
+            const nav = document.querySelector('header nav');
+            menuButton.addEventListener('click', () => {
+                nav.classList.toggle('hidden');nav.classList.toggle('flex');nav.classList.toggle('flex-col');nav.classList.toggle('absolute');nav.classList.toggle('top-16');nav.classList.toggle('left-0');nav.classList.toggle('right-0');nav.classList.toggle('bg-gray-900');nav.classList.toggle('p-4');nav.classList.toggle('space-y-4');nav.classList.toggle('border-t');nav.classList.toggle('border-gray-800');
+            });
+        }
+        document.addEventListener('DOMContentLoaded', () => {
+            setupMobileMenu();
+        });
+    </script>
+</body>
+</html>
