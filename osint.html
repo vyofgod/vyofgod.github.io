@@ -1,0 +1,715 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Osinters Platform</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&display=swap');
+
+        body {
+            font-family: 'Space Grotesk', sans-serif;
+            background-color: #0a0a0a;
+            color: #e2e8f0;
+            overflow-x: hidden;
+        }
+
+        ::selection {
+            background-color: #8b5cf6; /* Purple accent */
+            color: #ffffff; /* White text */
+        }
+        ::-moz-selection { /* Firefox */
+            background-color: #8b5cf6;
+            color: #ffffff;
+        }
+
+        .hero-bg {
+            background: radial-gradient(circle at 10% 20%, rgba(87, 83, 255, 0.1) 0%, rgba(0, 0, 0, 0) 50%),
+                        radial-gradient(circle at 90% 80%, rgba(255, 83, 168, 0.1) 0%, rgba(0, 0, 0, 0) 50%);
+        }
+
+        .glow-text {
+            text-shadow: 0 0 8px rgba(132, 94, 242, 0.8);
+        }
+
+        .glow-box {
+            box-shadow: 0 0 15px rgba(132, 94, 242, 0.5);
+            transition: box-shadow 0.3s ease-in-out; /* Added for smooth hover effect */
+        }
+        .glow-box:hover {
+            box-shadow: 0 0 25px rgba(132, 94, 242, 0.8); /* Enhanced glow on hover */
+        }
+
+        .feature-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 25px rgba(132, 94, 242, 0.3);
+        }
+
+        .nav-link::after {
+            content: '';
+            display: block;
+            width: 0;
+            height: 2px;
+            background: #8b5cf6;
+            transition: width 0.3s;
+        }
+
+        .nav-link:hover::after {
+            width: 100%;
+        }
+
+        .data-node {
+            position: absolute;
+            width: 8px;
+            height: 8px;
+            background: #8b5cf6;
+            border-radius: 50%;
+            filter: blur(1px);
+            animation: float 8s infinite ease-in-out;
+        }
+
+        @keyframes float {
+            0%, 100% { transform: translate(0, 0); }
+            25% { transform: translate(20px, -10px); }
+            50% { transform: translate(10px, 20px); }
+            75% { transform: translate(-20px, 10px); }
+        }
+
+        /* Custom CSS for video aspect ratio */
+        .aspect-video-container {
+            position: relative;
+            width: 100%;
+            padding-bottom: 56.25%; /* 16:9 aspect ratio (9 / 16 * 100) */
+            height: 0;
+            overflow: hidden;
+        }
+        .aspect-video-container iframe {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+        }
+
+        /* Scroll Animation Styles */
+        .scroll-animate {
+            opacity: 0;
+            transform: translateY(50px) scale(0.95); /* Start slightly lower and smaller */
+            transition: opacity 1.2s ease-out, transform 1.2s cubic-bezier(0.165, 0.84, 0.44, 1); /* Slower and smoother easing */
+            will-change: opacity, transform; /* Hint for browser optimization */
+        }
+        .scroll-animate.is-visible {
+            opacity: 1;
+            transform: translateY(0) scale(1); /* End at normal position and size */
+        }
+    </style>
+</head>
+<body>
+    <div class="page-wrapper min-h-screen flex flex-col">
+        <!-- Header -->
+        <header class="bg-gray-900/80 backdrop-blur-md border-b border-gray-800 fixed w-full z-50">
+            <div class="container mx-auto px-6 py-4">
+                <div class="flex justify-between items-center">
+                    <a href="osint.html" class="flex items-center space-x-2 transition-transform duration-300 ease-in-out hover:scale-105">
+                        <i class="fas fa-bug text-purple-500 text-2xl "></i>
+                        <span class="text-xl font-bold bg-gradient-to-r from-purple-500 to-pink-500 bg-clip-text text-transparent">Osinters</span>
+                    </a>
+                    <nav class="hidden md:flex space-x-8">
+                        <a href="osint.html" class="nav-link text-gray-300 hover:text-white transition">Home</a>
+                        <a href="services.html" class="nav-link text-gray-300 hover:text-white transition">Services</a>
+                        <a href="features.html" class="nav-link text-gray-300 hover:text-white transition">Features</a>
+                        <a href="pricing.html" class="nav-link text-gray-300 hover:text-white transition">Pricing</a>
+                        <a href="contact.html" class="nav-link text-gray-300 hover:text-white transition">Contact</a>
+                        <a href="privacy.html" class="nav-link text-gray-300 hover:text-white transition">Privacy</a>
+                    </nav>
+                    <div class="flex items-center space-x-4">
+                        <a href="login.html" class="px-4 py-2 rounded-full text-sm font-medium bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700 text-white transition-all transform hover:scale-105 active:scale-95 focus:outline-none focus:ring-2 focus:ring-purple-500 focus:ring-offset-2 focus:ring-offset-gray-900/80">
+                            Sign In
+                        </a>
+                        <button class="md:hidden text-gray-300 hover:text-purple-400 transition-colors duration-300 active:scale-90">
+                            <i class="fas fa-bars text-xl"></i>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </header>
+
+        <!-- Hero Section -->
+        <section class="hero-area hero-bg min-h-screen flex items-center pt-20 relative overflow-hidden">
+            <!-- Animated data nodes -->
+            <div id="data-nodes-container"></div>
+
+            <div class="container mx-auto px-6 py-20 z-10">
+                <div class="max-w-3xl mx-auto text-center">
+                    <h1 class="text-5xl md:text-7xl font-bold mb-6 glow-text">
+                        <span class="bg-gradient-to-r from-purple-400 to-pink-400 bg-clip-text text-transparent">Uncover</span> Hidden Connections
+                    </h1>
+                    <p class="text-xl md:text-2xl text-gray-300 mb-10 leading-relaxed">
+                        Our advanced OSINT platform helps you discover, analyze, and visualize data relationships with unprecedented clarity and precision.
+                    </p>
+                    <div class="flex flex-col sm:flex-row justify-center gap-4">
+                        <button id="startFreeTrialButton" class="px-8 py-4 rounded-full text-lg font-semibold bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700 text-white transition-all transform hover:scale-105 glow-box active:scale-95 focus:outline-none focus:ring-2 focus:ring-purple-500 focus:ring-offset-2 focus:ring-offset-transparent">
+                            Start Free Trial
+                        </button>
+                        <button id="watchDemoBtn" class="px-8 py-4 rounded-full text-lg font-semibold bg-gray-800 hover:bg-gray-700 text-white border border-gray-700 hover:border-gray-600 transition-all transform hover:scale-105 active:scale-95 focus:outline-none focus:ring-2 focus:ring-gray-500 focus:ring-offset-2 focus:ring-offset-transparent">
+                            <i class="fas fa-play-circle mr-2"></i> Watch Demo
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <div class="absolute bottom-10 left-0 right-0 flex justify-center">
+                <a href="#features" class="text-gray-400 hover:text-white animate-bounce">
+                    <i class="fas fa-chevron-down text-2xl"></i>
+                </a>
+            </div>
+        </section>
+
+        <!-- Last Leaks Section -->
+        <section id="last-leaks" class="py-20 bg-gray-900">
+            <div class="container mx-auto px-6">
+                <div class="text-center mb-16">
+                    <h2 class="text-3xl md:text-4xl font-bold mb-4">
+                        <span class="bg-gradient-to-r from-purple-400 to-pink-400 bg-clip-text text-transparent">Last</span> Leaks
+                    </h2>
+                    <p class="max-w-2xl mx-auto text-gray-400 text-lg">
+                        Stay updated with the latest discovered data breaches and intelligence.
+                    </p>
+                </div>
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+                    <!-- Placeholder Leak Item 1 -->
+                    <div class="leak-item bg-gray-800/50 rounded-xl p-6 border border-gray-700 hover:shadow-lg hover:shadow-pink-500/30 transition-shadow duration-300">
+                        <h3 class="text-xl font-semibold text-pink-400 mb-2">Major Corp Database Exposed</h3>
+                        <p class="text-gray-400 text-sm mb-1"><i class="fas fa-fingerprint mr-2 text-gray-500"></i>Source: DarkNet Forum X</p>
+                        <p class="text-gray-400 text-sm mb-3"><i class="fas fa-calendar-alt mr-2 text-gray-500"></i>Date: 2023-10-25</p>
+                        <p class="text-gray-300 leading-relaxed">Over 1 million user records including emails and hashed passwords found online, potentially affecting numerous individuals.</p>
+                        <a href="#"
+                           class="view-leak-details inline-block mt-4 text-purple-400 hover:text-purple-300 font-medium group"
+                           data-title="Major Corp Database Exposed"
+                           data-source="DarkNet Forum X"
+                           data-date="2023-10-25"
+                           data-description="Over 1 million user records including emails and hashed passwords found online, potentially affecting numerous individuals.">
+                           View Details <i class="fas fa-arrow-right ml-1 transform group-hover:translate-x-1 transition-transform"></i>
+                        </a>
+                    </div>
+                    <!-- Placeholder Leak Item 2 -->
+                    <div class="leak-item bg-gray-800/50 rounded-xl p-6 border border-gray-700 hover:shadow-lg hover:shadow-pink-500/30 transition-shadow duration-300">
+                        <h3 class="text-xl font-semibold text-pink-400 mb-2">Government Agency Breach</h3>
+                        <p class="text-gray-400 text-sm mb-1"><i class="fas fa-fingerprint mr-2 text-gray-500"></i>Source: Security Researcher Tip</p>
+                        <p class="text-gray-400 text-sm mb-3"><i class="fas fa-calendar-alt mr-2 text-gray-500"></i>Date: 2023-10-22</p>
+                        <p class="text-gray-300 leading-relaxed">Sensitive documents and internal communications leaked from a misconfigured government server, raising security concerns.</p>
+                        <a href="#"
+                           class="view-leak-details inline-block mt-4 text-purple-400 hover:text-purple-300 font-medium group"
+                           data-title="Government Agency Breach"
+                           data-source="Security Researcher Tip"
+                           data-date="2023-10-22"
+                           data-description="Sensitive documents and internal communications leaked from a misconfigured government server, raising security concerns.">
+                           View Details <i class="fas fa-arrow-right ml-1 transform group-hover:translate-x-1 transition-transform"></i>
+                        </a>
+                    </div>
+                    <!-- Placeholder Leak Item 3 -->
+                    <div class="leak-item bg-gray-800/50 rounded-xl p-6 border border-gray-700 hover:shadow-lg hover:shadow-pink-500/30 transition-shadow duration-300">
+                        <h3 class="text-xl font-semibold text-pink-400 mb-2">Social Media Platform Credentials</h3>
+                        <p class="text-gray-400 text-sm mb-1"><i class="fas fa-fingerprint mr-2 text-gray-500"></i>Source: Paste Site Y</p>
+                        <p class="text-gray-400 text-sm mb-3"><i class="fas fa-calendar-alt mr-2 text-gray-500"></i>Date: 2023-10-20</p>
+                        <p class="text-gray-300 leading-relaxed">A list of 50,000 usernames and passwords for a popular social media site appeared online, urging users to change credentials.</p>
+                        <a href="#"
+                           class="view-leak-details inline-block mt-4 text-purple-400 hover:text-purple-300 font-medium group"
+                           data-title="Social Media Platform Credentials"
+                           data-source="Paste Site Y"
+                           data-date="2023-10-20"
+                           data-description="A list of 50,000 usernames and passwords for a popular social media site appeared online, urging users to change credentials.">
+                           View Details <i class="fas fa-arrow-right ml-1 transform group-hover:translate-x-1 transition-transform"></i>
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Features Section -->
+        <section id="features" class="py-20 bg-gray-900/50">
+            <div class="container mx-auto px-6">
+                <div class="text-center mb-16">
+                    <h2 class="text-3xl md:text-4xl font-bold mb-4">
+                        <span class="bg-gradient-to-r from-purple-400 to-pink-400 bg-clip-text text-transparent">Powerful</span> Features
+                    </h2>
+                    <p class="max-w-2xl mx-auto text-gray-400 text-lg">
+                        Designed for professionals who need comprehensive data intelligence solutions
+                    </p>
+                </div>
+
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+                    <!-- Feature 1 -->
+                    <div class="feature-card bg-gray-800/50 rounded-xl p-8 border border-gray-800 transition-all duration-300">
+                        <div class="w-14 h-14 rounded-lg bg-purple-900/30 flex items-center justify-center mb-6">
+                            <i class="fas fa-search text-purple-400 text-2xl"></i>
+                        </div>
+                        <h3 class="text-xl font-bold mb-3">Deep Web Scanning</h3>
+                        <p class="text-gray-400">
+                            Access and analyze data from the deep web with our specialized crawlers that go beyond surface-level indexing.
+                        </p>
+                    </div>
+
+                    <!-- Feature 2 -->
+                    <div class="feature-card bg-gray-800/50 rounded-xl p-8 border border-gray-800 transition-all duration-300">
+                        <div class="w-14 h-14 rounded-lg bg-pink-900/30 flex items-center justify-center mb-6">
+                            <i class="fas fa-project-diagram text-pink-400 text-2xl"></i>
+                        </div>
+                        <h3 class="text-xl font-bold mb-3">Relationship Mapping</h3>
+                        <p class="text-gray-400">
+                            Visualize complex connections between entities with interactive graphs that reveal hidden patterns.
+                        </p>
+                    </div>
+
+                    <!-- Feature 3 -->
+                    <div class="feature-card bg-gray-800/50 rounded-xl p-8 border border-gray-800 transition-all duration-300">
+                        <div class="w-14 h-14 rounded-lg bg-blue-900/30 flex items-center justify-center mb-6">
+                            <i class="fas fa-robot text-blue-400 text-2xl"></i>
+                        </div>
+                        <h3 class="text-xl font-bold mb-3">AI-Powered Analysis</h3>
+                        <p class="text-gray-400">
+                            Our machine learning models identify relevant insights and anomalies in massive datasets automatically.
+                        </p>
+                    </div>
+
+                    <!-- Feature 4 -->
+                    <div class="feature-card bg-gray-800/50 rounded-xl p-8 border border-gray-800 transition-all duration-300">
+                        <div class="w-14 h-14 rounded-lg bg-green-900/30 flex items-center justify-center mb-6">
+                            <i class="fas fa-shield-alt text-green-400 text-2xl"></i>
+                        </div>
+                        <h3 class="text-xl font-bold mb-3">Secure Data Handling</h3>
+                        <p class="text-gray-400">
+                            Enterprise-grade encryption and secure protocols ensure your investigations remain confidential.
+                        </p>
+                    </div>
+
+                    <!-- Feature 5 -->
+                    <div class="feature-card bg-gray-800/50 rounded-xl p-8 border border-gray-800 transition-all duration-300">
+                        <div class="w-14 h-14 rounded-lg bg-yellow-900/30 flex items-center justify-center mb-6">
+                            <i class="fas fa-bolt text-yellow-400 text-2xl"></i>
+                        </div>
+                        <h3 class="text-xl font-bold mb-3">Real-Time Monitoring</h3>
+                        <p class="text-gray-400">
+                            Set up alerts for specific data patterns and get notified immediately when new relevant information appears.
+                        </p>
+                    </div>
+
+                    <!-- Feature 6 -->
+                    <div class="feature-card bg-gray-800/50 rounded-xl p-8 border border-gray-800 transition-all duration-300">
+                        <div class="w-14 h-14 rounded-lg bg-red-900/30 flex items-center justify-center mb-6">
+                            <i class="fas fa-chart-line text-red-400 text-2xl"></i>
+                        </div>
+                        <h3 class="text-xl font-bold mb-3">Comprehensive Reporting</h3>
+                        <p class="text-gray-400">
+                            Generate detailed, customizable reports with visualizations that make complex data understandable.
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- About Section -->
+        <section id="developer-api" class="py-20 bg-gray-900">
+            <div class="container mx-auto px-6">
+                <div class="flex flex-col lg:flex-row items-center gap-12">
+                    <div class="lg:w-1/2">
+                        <div class="relative">
+                            <div class="w-full h-full bg-gradient-to-r from-purple-500/20 to-pink-500/20 rounded-xl absolute -inset-2 blur-lg"></div>
+                            <div class="relative bg-gray-800 rounded-xl overflow-hidden border border-gray-700">
+                                <div class="p-4 bg-gray-900 border-b border-gray-800 flex space-x-2">
+                                    <div class="w-3 h-3 rounded-full bg-red-500"></div>
+                                    <div class="w-3 h-3 rounded-full bg-yellow-500"></div>
+                                    <div class="w-3 h-3 rounded-full bg-green-500"></div>
+                                </div>
+                                <div class="p-4">
+                                    <div class="mockup-code bg-gray-900 text-sm p-4">
+                                        <pre><code><span class="text-purple-400">const</span> <span class="text-blue-400">analyzeData</span> = <span class="text-purple-400">async</span> (dataset) => {</code></pre>
+                                        <pre><code>  <span class="text-purple-400">const</span> <span class="text-pink-400">results</span> = <span class="text-purple-400">await</span> <span class="text-blue-400">osintAPI</span>.<span class="text-blue-400">deepScan</span>(dataset);</code></pre>
+                                        <pre><code>  <span class="text-purple-400">const</span> <span class="text-pink-400">connections</span> = <span class="text-blue-400">findRelationships</span>(results);</code></pre>
+                                        <pre><code>  <span class="text-purple-400">return</span> <span class="text-blue-400">visualizeNetwork</span>(connections);</code></pre>
+                                        <pre><code>};</code></pre>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="lg:w-1/2">
+                        <h2 class="text-3xl md:text-4xl font-bold mb-6">
+                            <span class="bg-gradient-to-r from-purple-400 to-pink-400 bg-clip-text text-transparent">Developer</span> Friendly
+                        </h2>
+                        <p class="text-gray-400 mb-6 text-lg">
+                            Our platform offers a comprehensive API that allows you to integrate OSINT capabilities directly into your applications and workflows.
+                        </p>
+                        <ul class="space-y-4 mb-8">
+                            <li class="flex items-start group transition-transform duration-200 ease-in-out hover:translate-x-1">
+                                <i class="fas fa-check-circle text-purple-400 mt-1 mr-3"></i>
+                                <span class="text-gray-300 group-hover:text-purple-300 transition-colors duration-200">RESTful API with detailed documentation</span>
+                            </li>
+                            <li class="flex items-start group transition-transform duration-200 ease-in-out hover:translate-x-1">
+                                <i class="fas fa-check-circle text-purple-400 mt-1 mr-3"></i>
+                                <span class="text-gray-300 group-hover:text-purple-300 transition-colors duration-200">SDKs available for all major languages</span>
+                            </li>
+                            <li class="flex items-start group transition-transform duration-200 ease-in-out hover:translate-x-1">
+                                <i class="fas fa-check-circle text-purple-400 mt-1 mr-3"></i>
+                                <span class="text-gray-300 group-hover:text-purple-300 transition-colors duration-200">Webhooks for real-time data updates</span>
+                            </li>
+                            <li class="flex items-start group transition-transform duration-200 ease-in-out hover:translate-x-1">
+                                <i class="fas fa-check-circle text-purple-400 mt-1 mr-3"></i>
+                                <span class="text-gray-300 group-hover:text-purple-300 transition-colors duration-200">Custom query building with our visual editor</span>
+                            </li>
+                        </ul>
+                        <a href="api-docs.html" class="px-6 py-3 rounded-lg text-md font-semibold bg-gray-800 hover:bg-gray-700 text-white border border-gray-700 hover:border-gray-600 transition-all transform hover:scale-105 active:scale-95 focus:outline-none focus:ring-2 focus:ring-gray-500 focus:ring-offset-2 focus:ring-offset-gray-900 inline-flex items-center">
+                            <i class="fas fa-book-open mr-2"></i> View API Docs
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- CTA Section -->
+        <section class="py-20 bg-gradient-to-br from-gray-900 to-gray-800">
+            <div class="container mx-auto px-6">
+                <div class="max-w-4xl mx-auto text-center bg-gray-900/50 rounded-xl p-12 border border-gray-800 glow-box">
+                    <h2 class="text-3xl md:text-4xl font-bold mb-6">
+                        Ready to <span class="bg-gradient-to-r from-purple-400 to-pink-400 bg-clip-text text-transparent">Transform</span> Your OSINT Workflow?
+                    </h2>
+                    <p class="text-xl text-gray-300 mb-10 max-w-3xl mx-auto">
+                        Join thousands of investigators, analysts, and security professionals who rely on our platform for their most critical work.
+                    </p>
+                    <div class="flex flex-col sm:flex-row justify-center gap-4">
+                        <a href="get-started.html" class="block text-center px-8 py-4 rounded-full text-lg font-semibold bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700 text-white transition-all transform hover:scale-105 active:scale-95 focus:outline-none focus:ring-2 focus:ring-purple-500 focus:ring-offset-2 focus:ring-offset-gray-900/50 hover:shadow-lg hover:shadow-purple-500/40">
+                            Get Started Now
+                        </a>
+                        <a href="contact.html" class="block text-center px-8 py-4 rounded-full text-lg font-semibold bg-gray-800 hover:bg-gray-700 text-white border border-gray-700 hover:border-gray-600 transition-all transform hover:scale-105 active:scale-95 focus:outline-none focus:ring-2 focus:ring-gray-500 focus:ring-offset-2 focus:ring-offset-gray-900/50 hover:shadow-md hover:shadow-gray-600/30">
+                            <i class="fas fa-comments mr-2"></i> Contact Sales
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Footer -->
+        <footer class="bg-gray-900/80 border-t border-gray-800 py-12">
+            <div class="container mx-auto px-6">
+                <div class="grid grid-cols-1 md:grid-cols-4 gap-8">
+                    <div>
+                        <div class="flex items-center space-x-2 mb-4">
+                            <i class="fas fa-bug text-purple-500 text-2xl"></i>
+                            <span class="text-xl font-bold bg-gradient-to-r from-purple-500 to-pink-500 bg-clip-text text-transparent">Osinters</span>
+                        </div>
+                        <p class="text-gray-400 mb-4">
+                            Advanced open-source intelligence platform for professionals.
+                        </p>
+                        <div class="flex space-x-4">
+                            <a href="#" class="text-gray-400 hover:text-purple-400 transform hover:scale-125 transition-all duration-200 ease-in-out">
+                                <i class="fab fa-twitter"></i>
+                            </a>
+                            <a href="#" class="text-gray-400 hover:text-purple-400 transform hover:scale-125 transition-all duration-200 ease-in-out">
+                                <i class="fab fa-github"></i>
+                            </a>
+                            <a href="#" class="text-gray-400 hover:text-purple-400 transform hover:scale-125 transition-all duration-200 ease-in-out">
+                                <i class="fab fa-linkedin"></i>
+                            </a>
+                            <a href="#" class="text-gray-400 hover:text-purple-400 transform hover:scale-125 transition-all duration-200 ease-in-out">
+                                <i class="fab fa-discord"></i>
+                            </a>
+                        </div>
+                    </div>
+                    <div>
+                        <h3 class="text-lg font-semibold text-white mb-4">Product</h3>
+                        <ul class="space-y-2">
+                            <li><a href="features.html" class="text-gray-400 hover:text-purple-400 hover:translate-x-1 transform transition-all duration-200 ease-in-out block">Features</a></li>
+                            <li><a href="pricing.html" class="text-gray-400 hover:text-purple-400 hover:translate-x-1 transform transition-all duration-200 ease-in-out block">Pricing</a></li>
+                            <li><a href="api-docs.html" class="text-gray-400 hover:text-purple-400 hover:translate-x-1 transform transition-all duration-200 ease-in-out block">API</a></li>
+                            <li><a href="integrations.html" class="text-gray-400 hover:text-purple-400 hover:translate-x-1 transform transition-all duration-200 ease-in-out block">Integrations</a></li>
+                        </ul>
+                    </div>
+                    <div>
+                        <h3 class="text-lg font-semibold text-white mb-4">Resources</h3>
+                        <ul class="space-y-2">
+                            <li><a href="documentation.html" class="text-gray-400 hover:text-purple-400 hover:translate-x-1 transform transition-all duration-200 ease-in-out block">Documentation</a></li>
+                            <li><a href="guides.html" class="text-gray-400 hover:text-purple-400 hover:translate-x-1 transform transition-all duration-200 ease-in-out block">Guides</a></li>
+                            <li><a href="blog.html" class="text-gray-400 hover:text-purple-400 hover:translate-x-1 transform transition-all duration-200 ease-in-out block">Blog</a></li>
+                            <li><a href="support.html" class="text-gray-400 hover:text-purple-400 hover:translate-x-1 transform transition-all duration-200 ease-in-out block">Support</a></li>
+                        </ul>
+                    </div>
+                    <div>
+                        <h3 class="text-lg font-semibold text-white mb-4">Company</h3>
+                        <ul class="space-y-2">
+                            <li><a href="about.html" class="text-gray-400 hover:text-purple-400 hover:translate-x-1 transform transition-all duration-200 ease-in-out block">About</a></li>
+                            <li><a href="careers.html" class="text-gray-400 hover:text-purple-400 hover:translate-x-1 transform transition-all duration-200 ease-in-out block">Careers</a></li>
+                            <li><a href="privacy.html" class="text-gray-400 hover:text-purple-400 hover:translate-x-1 transform transition-all duration-200 ease-in-out block">Privacy</a></li>
+                            <li><a href="terms.html" class="text-gray-400 hover:text-purple-400 hover:translate-x-1 transform transition-all duration-200 ease-in-out block">Terms</a></li>
+                        </ul>
+                    </div>
+                </div>
+                <div class="border-t border-gray-800 mt-12 pt-8 flex flex-col md:flex-row justify-between items-center">
+                    <p class="text-gray-500 text-sm mb-4 md:mb-0">
+                        © 2023 Osinters. All rights reserved.
+                    </p>
+                    <div class="flex space-x-6">
+                        <a href="privacy.html" class="text-gray-500 hover:text-purple-400 text-sm transition-colors duration-200 ease-in-out">Privacy Policy</a>
+                        <a href="terms.html" class="text-gray-500 hover:text-purple-400 text-sm transition-colors duration-200 ease-in-out">Terms of Service</a>
+                        <a href="cookie-policy.html" class="text-gray-500 hover:text-purple-400 text-sm transition-colors duration-200 ease-in-out">Cookie Policy</a>
+                    </div>
+                </div>
+            </div>
+        </footer>
+
+        <!-- Video Modal -->
+        <div id="videoModal" class="fixed inset-0 bg-black bg-opacity-80 flex items-center justify-center hidden z-[100] p-4">
+            <div class="bg-gray-900 p-5 rounded-xl shadow-2xl max-w-3xl w-full relative border border-gray-700">
+                <button id="closeModalBtnVideo" aria-label="Close video modal" class="absolute -top-3 -right-3 text-gray-100 bg-purple-600 hover:bg-purple-700 rounded-full w-9 h-9 flex items-center justify-center text-2xl z-10 focus:outline-none focus:ring-2 focus:ring-purple-500 focus:ring-offset-2 focus:ring-offset-gray-900">
+                    &times;
+                </button>
+                <h3 class="text-2xl font-semibold text-purple-400 mb-4 glow-text">Osinters Platform Demo</h3>
+                <div class="aspect-video-container bg-black rounded-lg overflow-hidden shadow-lg">
+                    <!-- DEĞİŞTİRİN: 'YOUR_YOUTUBE_VIDEO_ID' kısmını kendi YouTube video ID'nizle değiştirin. -->
+                    <iframe id="demoVideoPlayer" width="560" height="315" src="" title="Osinters Demo Video" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe>
+                </div>
+            </div>
+        </div>
+        <!-- End Video Modal -->
+
+        <!-- Leak Details Modal -->
+        <div id="leakModal" class="fixed inset-0 bg-black bg-opacity-75 flex items-center justify-center hidden z-[100] p-4">
+            <div class="bg-gray-800 p-6 md:p-8 rounded-lg shadow-xl max-w-xl w-full relative border border-gray-700 max-h-[90vh] overflow-y-auto">
+                <button id="closeModalButtonLeak" class="absolute top-3 right-3 md:top-4 md:right-4 text-gray-400 hover:text-white text-3xl leading-none focus:outline-none">
+                    &times;
+                </button>
+                <h3 id="modalTitleElement" class="text-xl md:text-2xl font-bold text-pink-400 mb-4">Leak Details</h3>
+                <div class="text-gray-300 space-y-3">
+                    <p><strong>Source:</strong> <span id="modalSourceElement" class="text-gray-400"></span></p>
+                    <p><strong>Date:</strong> <span id="modalDateElement" class="text-gray-400"></span></p>
+                    <div class="mt-2">
+                        <p class="font-semibold"><strong>Description:</strong></p>
+                        <p id="modalDescriptionElement" class="text-gray-400 leading-relaxed"></p>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- End Leak Details Modal -->
+    </div>
+
+    <script>
+        // Create animated data nodes for hero section
+        function createDataNodes() {
+            const container = document.getElementById('data-nodes-container');
+            if (!container) return; // Guard clause if container not found
+            const nodeCount = 20;
+
+            for (let i = 0; i < nodeCount; i++) {
+                const node = document.createElement('div');
+                node.className = 'data-node';
+
+                // Random position
+                const posX = Math.random() * 100;
+                const posY = Math.random() * 100;
+
+                // Random size
+                const size = 4 + Math.random() * 8;
+
+                // Random animation delay
+                const delay = Math.random() * 5;
+
+                node.style.left = `${posX}%`;
+                node.style.top = `${posY}%`;
+                node.style.width = `${size}px`;
+                node.style.height = `${size}px`;
+                node.style.animationDelay = `${delay}s`;
+
+                container.appendChild(node);
+            }
+        }
+
+        // Toggle mobile menu
+        function setupMobileMenu() {
+            const menuButton = document.querySelector('header button:last-child'); // Hamburger button
+            const nav = document.querySelector('header nav');
+
+            if (menuButton && nav) {
+                menuButton.addEventListener('click', () => {
+                    const isExpanded = menuButton.getAttribute('aria-expanded') === 'true' || false;
+                    menuButton.setAttribute('aria-expanded', !isExpanded);
+                    nav.classList.toggle('hidden');
+                    nav.classList.toggle('flex'); 
+                    nav.classList.toggle('flex-col'); 
+                    nav.classList.toggle('absolute'); 
+                    nav.classList.toggle('top-full'); // Position below the header
+                    nav.classList.toggle('left-0');
+                    nav.classList.toggle('right-0');
+                    nav.classList.toggle('bg-gray-900/95'); 
+                    nav.classList.toggle('backdrop-blur-sm');
+                    nav.classList.toggle('p-4'); 
+                    nav.classList.toggle('space-y-4'); 
+                    nav.classList.toggle('md:space-y-0'); 
+                    nav.classList.toggle('border-t');
+                    nav.classList.toggle('border-gray-800');
+                });
+            }
+        }
+        // Smooth scrolling for anchor links
+        function setupSmoothScrolling() {
+            document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+                anchor.addEventListener('click', function (e) {
+                    e.preventDefault();
+
+                    const targetId = this.getAttribute('href');
+                    if (targetId === '#') return;
+
+                    const targetElement = document.querySelector(targetId);
+                    if (targetElement) {
+                        targetElement.scrollIntoView({
+                            behavior: 'smooth'
+                        });
+                    }
+                });
+            });
+        }
+
+        // Setup Leak Modal
+        function setupLeakModal() {
+            const viewDetailsButtons = document.querySelectorAll('.view-leak-details');
+            const leakModal = document.getElementById('leakModal');
+            const closeModalButton = document.getElementById('closeModalButtonLeak'); // Changed ID for clarity
+            const modalTitleElement = document.getElementById('modalTitleElement');
+            const modalSourceElement = document.getElementById('modalSourceElement');
+            const modalDateElement = document.getElementById('modalDateElement');
+            const modalDescriptionElement = document.getElementById('modalDescriptionElement');
+
+            if (!leakModal || !closeModalButton || !modalTitleElement || !modalSourceElement || !modalDateElement || !modalDescriptionElement) {
+                console.warn('Leak modal elements not found. Ensure all modal HTML elements have the correct IDs.');
+                return;
+            }
+
+            viewDetailsButtons.forEach(button => {
+                button.addEventListener('click', function(event) {
+                    event.preventDefault();
+                    
+                    modalTitleElement.textContent = this.dataset.title || 'N/A';
+                    modalSourceElement.textContent = this.dataset.source || 'N/A';
+                    modalDateElement.textContent = this.dataset.date || 'N/A';
+                    modalDescriptionElement.textContent = this.dataset.description || 'No description available.';
+                    
+                    leakModal.classList.remove('hidden');
+                    document.body.style.overflow = 'hidden'; // Prevent background scrolling
+                });
+            });
+
+            const closeTheLeakModal = () => {
+                leakModal.classList.add('hidden');
+                document.body.style.overflow = ''; // Restore background scrolling
+            };
+
+            closeModalButton.addEventListener('click', closeTheLeakModal);
+
+            window.addEventListener('keydown', (event) => {
+                if (event.key === 'Escape' && !leakModal.classList.contains('hidden')) {
+                    closeTheLeakModal();
+                }
+            });
+
+            leakModal.addEventListener('click', (event) => {
+                if (event.target === leakModal) { 
+                    closeTheLeakModal();
+                }
+            });
+        }
+
+        // Video Modal Script
+        function setupVideoModal() {
+            const watchDemoBtn = document.getElementById('watchDemoBtn');
+            const videoModal = document.getElementById('videoModal');
+            const closeModalBtnVideo = document.getElementById('closeModalBtnVideo'); // Changed ID for clarity
+            const demoVideoPlayer = document.getElementById('demoVideoPlayer');
+            
+            // DEĞİŞTİRİN: 'YOUR_YOUTUBE_VIDEO_ID' kısmını kendi YouTube video ID'nizle değiştirin.
+            // Örnek olarak 'dQw4w9WgXcQ' (Rick Astley) kullanılmıştır.
+            const youtubeVideoId = 'RNufAD5cSmg'; 
+            const videoBaseUrl = 'https://www.youtube.com/embed/';
+
+            if (watchDemoBtn && videoModal && closeModalBtnVideo && demoVideoPlayer) {
+                watchDemoBtn.addEventListener('click', () => {
+                    demoVideoPlayer.src = `${videoBaseUrl}${youtubeVideoId}?autoplay=1&rel=0&modestbranding=1`; 
+                    videoModal.classList.remove('hidden');
+                    document.body.style.overflow = 'hidden'; // Arka plan kaydırmasını engelle
+                });
+
+                const closeTheVideoModal = () => {
+                    videoModal.classList.add('hidden');
+                    demoVideoPlayer.src = ''; // Videoyu durdurmak için src'yi temizle
+                    document.body.style.overflow = ''; // Arka plan kaydırmasını geri yükle
+                };
+
+                closeModalBtnVideo.addEventListener('click', closeTheVideoModal);
+                videoModal.addEventListener('click', (event) => { // Modal dışına tıklayınca kapat
+                    if (event.target === videoModal) {
+                        closeTheVideoModal();
+                    }
+                });
+                document.addEventListener('keydown', (event) => { // Escape tuşu ile kapat
+                    if (event.key === 'Escape' && !videoModal.classList.contains('hidden')) {
+                        closeTheVideoModal();
+                    }
+                });
+            } else {
+                console.error('Video modal elemanları bulunamadı. IDleri kontrol edin: watchDemoBtn, videoModal, closeModalBtnVideo, demoVideoPlayer');
+            }
+        }
+
+        // Setup Scroll Animations
+        function setupScrollAnimations() {
+            const elementsToAnimate = document.querySelectorAll(
+                // Last Leaks items, Feature cards, Developer API columns, CTA box
+                '.leak-item, .feature-card, #developer-api .lg\\:flex-row > div, section.py-20.bg-gradient-to-br .glow-box'
+            );
+
+            if (!elementsToAnimate.length) {
+                // console.warn('Scroll animation: No elements found to animate.');
+                return;
+            }
+
+            const observer = new IntersectionObserver((entries, observerInstance) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        entry.target.classList.add('is-visible');
+                        observerInstance.unobserve(entry.target); // Stop observing once animated
+                    }
+                });
+            }, {
+                threshold: 0.1 // Trigger when 10% of the element is visible
+            });
+
+            elementsToAnimate.forEach(element => {
+                element.classList.add('scroll-animate'); // Add initial state class
+                observer.observe(element);
+            });
+        }
+
+        // Initialize everything when DOM is loaded
+        document.addEventListener('DOMContentLoaded', () => {
+            createDataNodes();
+            setupMobileMenu();
+            setupSmoothScrolling();
+            setupLeakModal(); 
+            setupVideoModal(); // Initialize the video modal functionality
+            setupScrollAnimations(); // Initialize scroll animations
+        });
+
+        // Logic for the "Start Free Trial" button
+        const startFreeTrialButton = document.getElementById('startFreeTrialButton');
+        if (startFreeTrialButton) {
+            startFreeTrialButton.addEventListener('click', function() {
+                // Check if user is "registered" (using localStorage for simulation)
+                if (localStorage.getItem('userHasRegistered') === 'true') {
+                    window.location.href = 'login.html'; // User is registered, go to login
+                } else {
+                    window.location.href = 'register.html'; // User not registered, go to register
+                }
+            });
+        }
+    </script>
+</body>
+</html>
