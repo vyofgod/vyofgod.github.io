@@ -1,715 +1,635 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="tr">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Osinters Platform</title>
+    <title>XSearchEngine</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link id="main-font" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700&display=swap" rel="stylesheet">
     <script src="https://cdn.tailwindcss.com"></script>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sortablejs@latest/Sortable.min.js"></script>
+
     <style>
-        @import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&display=swap');
+        :root {
+            --bg-color: #000000;
+            --text-color: #ffffff;
+            --widget-bg: rgba(255, 255, 255, 0.05);
+            --border-color: rgba(255, 255, 255, 0.1);
+            --accent-color: #3b82f6;
+            --accent-text-color: #ffffff; /* Yeni Değişken */
+            --text-muted: #a0a0a0;
+            --font-family: 'Inter', sans-serif;
+            --panel-section-bg: rgba(255, 255, 255, 0.05);
+            --hover-bg: rgba(255, 255, 255, 0.1);
+            --border-radius: 1rem;
+            --shadow: 0 4px 20px rgba(0,0,0,0.1);
+        }
+        [data-theme="light"] { --bg-color: #f0f2f5; --text-color: #111827; --widget-bg: #ffffff; --border-color: #e5e7eb; --text-muted: #6b7280; --panel-section-bg: #f9fafb; --hover-bg: rgba(0, 0, 0, 0.05); }
+        [data-theme="dark"] { --bg-color: #121212; --text-color: #e0e0e0; --widget-bg: #1f2937; --border-color: #374151; --text-muted: #9ca3af; --panel-section-bg: rgba(255, 255, 255, 0.05); --hover-bg: rgba(255, 255, 255, 0.1); --shadow: 0 4px 20px rgba(0,0,0,0.2); }
+        [data-theme="retro"] { --bg-color: #000000; --text-color: #00ff41; --widget-bg: #0d0d0d; --border-color: #00ff41; --accent-color: #00ff41; --text-muted: #00a72a; --panel-section-bg: #1a1a1a; --hover-bg: #1a1a1a; --font-family: 'VT323', monospace; --border-radius: 0; --shadow: none; }
+        [data-theme="serene"] { --bg-color: #e8f5e9; --text-color: #37474f; --widget-bg: rgba(255, 255, 255, 0.7); --border-color: rgba(100, 181, 246, 0.3); --accent-color: #29b6f6; --text-muted: #78909c; --panel-section-bg: rgba(255, 255, 255, 0.9); --hover-bg: rgba(179, 229, 252, 0.4); --font-family: 'Lora', serif; --border-radius: 1.5rem; --shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.1); }
+        [data-theme="neon"] { --bg-color: #0a0a1a; --text-color: #e0e0ff; --widget-bg: rgba(20, 20, 40, 0.6); --border-color: rgba(255, 0, 255, 0.5); --accent-color: #ff00ff; --text-muted: #8a8ac7; --panel-section-bg: rgba(20, 20, 40, 0.8); --hover-bg: rgba(255, 0, 255, 0.1); --font-family: 'Orbitron', sans-serif; --border-radius: 0.75rem; --shadow: 0 0 15px rgba(255, 0, 255, 0.3), 0 0 5px rgba(255, 0, 255, 0.2); }
+        [data-theme="paper"] { --bg-color: #fdfaf4; --text-color: #4c4a44; --widget-bg: #ffffff; --border-color: #e7e5e0; --accent-color: #d9534f; --text-muted: #96938c; --panel-section-bg: #f9f6f0; --hover-bg: #f5f2e9; --font-family: 'Merriweather', serif; --border-radius: 0.25rem; --shadow: 0 2px 4px rgba(0,0,0,0.05); }
 
-        body {
-            font-family: 'Space Grotesk', sans-serif;
-            background-color: #0a0a0a;
-            color: #e2e8f0;
-            overflow-x: hidden;
-        }
+        @keyframes fadeInUp { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+        @keyframes fadeOut { from { opacity: 1; } to { opacity: 0; } }
 
-        ::selection {
-            background-color: #8b5cf6; /* Purple accent */
-            color: #ffffff; /* White text */
-        }
-        ::-moz-selection { /* Firefox */
-            background-color: #8b5cf6;
-            color: #ffffff;
-        }
+        body { font-family: var(--font-family); background-color: var(--bg-color); color: var(--text-color); transition: background-color 0.5s ease, color 0.5s ease, background-image 0.5s ease; background-size: cover; background-position: center; background-attachment: fixed; display: flex; flex-direction: column; height: 100vh; }
+        body:not(.no-animations) .animated { animation: fadeInUp 0.5s ease-out forwards; }
+        body::before { content: ''; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background-image: radial-gradient(circle at 10% 10%, var(--accent-color), transparent 40vmax); opacity: 0.15; z-index: -1; transition: background-image 0.5s ease, opacity 0.5s ease; }
 
-        .hero-bg {
-            background: radial-gradient(circle at 10% 20%, rgba(87, 83, 255, 0.1) 0%, rgba(0, 0, 0, 0) 50%),
-                        radial-gradient(circle at 90% 80%, rgba(255, 83, 168, 0.1) 0%, rgba(0, 0, 0, 0) 50%);
-        }
+        .widget, .modal-content, #settings-panel, .search-input { border-radius: var(--border-radius); }
+        .widget { background-color: var(--widget-bg); border: 1px solid var(--border-color); backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px); box-shadow: var(--shadow); transition: all 0.3s ease; opacity: 0; color: var(--text-color); }
+        #weather-widget:hover { cursor: pointer; }
+        .accent-text { color: var(--accent-color); }
+        .accent-bg { background-color: var(--accent-color); color: var(--accent-text-color); }
 
-        .glow-text {
-            text-shadow: 0 0 8px rgba(132, 94, 242, 0.8);
-        }
+        #settings-panel { transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1); transform: translateX(100%); background-color: var(--widget-bg); backdrop-filter: blur(12px); border-left: 1px solid var(--border-color); }
+        #settings-panel.open { transform: translateX(0); }
 
-        .glow-box {
-            box-shadow: 0 0 15px rgba(132, 94, 242, 0.5);
-            transition: box-shadow 0.3s ease-in-out; /* Added for smooth hover effect */
-        }
-        .glow-box:hover {
-            box-shadow: 0 0 25px rgba(132, 94, 242, 0.8); /* Enhanced glow on hover */
-        }
+        .sortable-ghost { opacity: 0.8 !important; background: var(--accent-color) !important; border: 2px dashed var(--text-color); }
+        .sortable-ghost, .sortable-ghost .widget { border-radius: var(--border-radius); }
+        .sortable-drag { opacity: 0.9; transform: scale(1.02); box-shadow: 0 16px 32px rgba(0,0,0,0.3) !important; }
 
-        .feature-card:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 10px 25px rgba(132, 94, 242, 0.3);
-        }
+        input, textarea, select, button { border-radius: var(--border-radius); }
+        input:focus, textarea:focus, select:focus { outline: none; }
+        .input-base { background-color: transparent; border: 1px solid var(--border-color); color: var(--text-color); transition: box-shadow 0.2s ease, border-color 0.2s ease; }
+        .input-base:focus { border-color: var(--accent-color); box-shadow: 0 0 0 1px var(--accent-color); }
+        .input-base::placeholder { color: var(--text-muted); }
 
-        .nav-link::after {
-            content: '';
-            display: block;
-            width: 0;
-            height: 2px;
-            background: #8b5cf6;
-            transition: width 0.3s;
-        }
+        .search-input { background-color: var(--widget-bg); border: 2px solid var(--border-color); color: var(--text-color); transition: all 0.2s ease-in-out; }
+        .search-input:focus { border-color: var(--accent-color); box-shadow: 0 0 0 2px var(--accent-color); }
+        .themed-hover:hover { background-color: var(--hover-bg); }
+        .panel-section { background-color: var(--panel-section-bg); border-radius: var(--border-radius); }
+        .modal-content { color: var(--text-color); background-color: var(--widget-bg); }
+        .modal-text { color: var(--text-muted); }
 
-        .nav-link:hover::after {
-            width: 100%;
-        }
+        .modal-backdrop { animation: fadeIn 0.3s ease; }
+        .modal-backdrop.fade-out { animation: fadeOut 0.3s ease forwards; }
 
-        .data-node {
-            position: absolute;
-            width: 8px;
-            height: 8px;
-            background: #8b5cf6;
-            border-radius: 50%;
-            filter: blur(1px);
-            animation: float 8s infinite ease-in-out;
-        }
+        .tab-button { padding: 0.5rem 1rem; border-radius: 9999px; transition: all 0.2s ease-in-out; border: 2px solid transparent; color: var(--text-muted); }
+        .tab-button:hover:not(.active) { background-color: var(--hover-bg); }
+        .tab-button.active { background-color: var(--accent-color); color: var(--accent-text-color); font-weight: 600; }
+        .tab-content { display: none; }
+        .tab-content.active { display: block; animation: fadeIn 0.4s; }
 
-        @keyframes float {
-            0%, 100% { transform: translate(0, 0); }
-            25% { transform: translate(20px, -10px); }
-            50% { transform: translate(10px, 20px); }
-            75% { transform: translate(-20px, 10px); }
-        }
+        #command-palette { background-color: rgba(0,0,0,0.5); backdrop-filter: blur(8px); }
+        #command-palette-modal { background-color: var(--widget-bg); border: 1px solid var(--border-color); box-shadow: var(--shadow); }
+        .command-item.selected { background-color: var(--accent-color); color: var(--accent-text-color); }
+        .command-item.selected .command-desc { color: var(--accent-text-color); opacity: 0.8; }
 
-        /* Custom CSS for video aspect ratio */
-        .aspect-video-container {
-            position: relative;
-            width: 100%;
-            padding-bottom: 56.25%; /* 16:9 aspect ratio (9 / 16 * 100) */
-            height: 0;
-            overflow: hidden;
-        }
-        .aspect-video-container iframe {
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-        }
+        .code-editor { font-family: 'Courier New', Courier, monospace; font-size: 14px; background-color: var(--panel-section-bg); border: 1px solid var(--border-color); color: var(--text-color); }
 
-        /* Scroll Animation Styles */
-        .scroll-animate {
-            opacity: 0;
-            transform: translateY(50px) scale(0.95); /* Start slightly lower and smaller */
-            transition: opacity 1.2s ease-out, transform 1.2s cubic-bezier(0.165, 0.84, 0.44, 1); /* Slower and smoother easing */
-            will-change: opacity, transform; /* Hint for browser optimization */
-        }
-        .scroll-animate.is-visible {
-            opacity: 1;
-            transform: translateY(0) scale(1); /* End at normal position and size */
+        #accent-color-wrapper { position: relative; width: 100%; height: 2.5rem; }
+        #accent-color-display { width: 100%; height: 100%; border: 1px solid var(--border-color); border-radius: var(--border-radius); cursor: pointer; transition: border-color 0.2s ease; }
+        #accent-color-display:hover { border-color: var(--accent-color); }
+        #accent-color-input { position: absolute; top: 0; left: 0; width: 100%; height: 100%; opacity: 0; cursor: pointer; }
+
+        @media (max-width: 768px) {
+            #widget-grid { grid-template-columns: repeat(1, 1fr) !important; }
+            #settings-panel, #custom-widget-modal { max-width: 100vw; }
+            #clock { font-size: 3.75rem; }
+            #settings-tabs { flex-wrap: wrap; justify-content: center; }
         }
     </style>
 </head>
-<body>
-    <div class="page-wrapper min-h-screen flex flex-col">
-        <!-- Header -->
-        <header class="bg-gray-900/80 backdrop-blur-md border-b border-gray-800 fixed w-full z-50">
-            <div class="container mx-auto px-6 py-4">
-                <div class="flex justify-between items-center">
-                    <a href="index.html" class="flex items-center space-x-2 transition-transform duration-300 ease-in-out hover:scale-105">
-                        <i class="fas fa-bug text-purple-500 text-2xl "></i>
-                        <span class="text-xl font-bold bg-gradient-to-r from-purple-500 to-pink-500 bg-clip-text text-transparent">Osinters</span>
-                    </a>
-                    <nav class="hidden md:flex space-x-8">
-                        <a href="index.html" class="nav-link text-gray-300 hover:text-white transition">Home</a>
-                        <a href="services.html" class="nav-link text-gray-300 hover:text-white transition">Services</a>
-                        <a href="features.html" class="nav-link text-gray-300 hover:text-white transition">Features</a>
-                        <a href="pricing.html" class="nav-link text-gray-300 hover:text-white transition">Pricing</a>
-                        <a href="contact.html" class="nav-link text-gray-300 hover:text-white transition">Contact</a>
-                        <a href="privacy.html" class="nav-link text-gray-300 hover:text-white transition">Privacy</a>
-                    </nav>
-                    <div class="flex items-center space-x-4">
-                        <a href="login.html" class="px-4 py-2 rounded-full text-sm font-medium bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700 text-white transition-all transform hover:scale-105 active:scale-95 focus:outline-none focus:ring-2 focus:ring-purple-500 focus:ring-offset-2 focus:ring-offset-gray-900/80">
-                            Sign In
-                        </a>
-                        <button class="md:hidden text-gray-300 hover:text-purple-400 transition-colors duration-300 active:scale-90">
-                            <i class="fas fa-bars text-xl"></i>
-                        </button>
-                    </div>
-                </div>
+<body class="overflow-hidden">
+
+    <header class="flex-shrink-0 flex flex-col items-center justify-center pt-12 md:pt-16 pb-8 px-4 text-center">
+        <div id="clock" class="text-6xl md:text-7xl font-bold mb-6 animated"></div>
+        <form action="https://www.google.com/search" method="get" target="_blank" class="w-full max-w-xl mx-auto animated" style="animation-delay: 100ms;">
+             <div class="relative">
+                <i data-lucide="search" class="absolute left-5 top-1/2 -translate-y-1/2 w-6 h-6" style="color: var(--text-muted);"></i>
+                <input type="text" name="q" placeholder="Google'da Ara veya bir adres yaz" autocomplete="off" class="search-input w-full py-4 pl-14 pr-6 text-lg">
             </div>
-        </header>
+        </form>
+    </header>
 
-        <!-- Hero Section -->
-        <section class="hero-area hero-bg min-h-screen flex items-center pt-20 relative overflow-hidden">
-            <!-- Animated data nodes -->
-            <div id="data-nodes-container"></div>
+    <main id="widget-grid" class="flex-grow p-4 md:p-6 grid gap-4 md:gap-5 overflow-y-auto" style="grid-auto-rows: minmax(150px, auto);"></main>
 
-            <div class="container mx-auto px-6 py-20 z-10">
-                <div class="max-w-3xl mx-auto text-center">
-                    <h1 class="text-5xl md:text-7xl font-bold mb-6 glow-text">
-                        <span class="bg-gradient-to-r from-purple-400 to-pink-400 bg-clip-text text-transparent">Uncover</span> Hidden Connections
-                    </h1>
-                    <p class="text-xl md:text-2xl text-gray-300 mb-10 leading-relaxed">
-                        Our advanced OSINT platform helps you discover, analyze, and visualize data relationships with unprecedented clarity and precision.
-                    </p>
-                    <div class="flex flex-col sm:flex-row justify-center gap-4">
-                        <button id="startFreeTrialButton" class="px-8 py-4 rounded-full text-lg font-semibold bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700 text-white transition-all transform hover:scale-105 glow-box active:scale-95 focus:outline-none focus:ring-2 focus:ring-purple-500 focus:ring-offset-2 focus:ring-offset-transparent">
-                            Start Free Trial
-                        </button>
-                        <button id="watchDemoBtn" class="px-8 py-4 rounded-full text-lg font-semibold bg-gray-800 hover:bg-gray-700 text-white border border-gray-700 hover:border-gray-600 transition-all transform hover:scale-105 active:scale-95 focus:outline-none focus:ring-2 focus:ring-gray-500 focus:ring-offset-2 focus:ring-offset-transparent">
-                            <i class="fas fa-play-circle mr-2"></i> Watch Demo
-                        </button>
-                    </div>
-                </div>
-            </div>
+    <button id="settings-toggle" class="fixed bottom-6 right-6 p-3 rounded-full accent-bg shadow-lg hover:opacity-90 transition-all duration-300 transform hover:scale-110 active:scale-100">
+        <i data-lucide="settings" class="w-6 h-6"></i>
+    </button>
 
-            <div class="absolute bottom-10 left-0 right-0 flex justify-center">
-                <a href="#features" class="text-gray-400 hover:text-white animate-bounce">
-                    <i class="fas fa-chevron-down text-2xl"></i>
-                </a>
-            </div>
-        </section>
-
-        <!-- Last Leaks Section -->
-        <section id="last-leaks" class="py-20 bg-gray-900">
-            <div class="container mx-auto px-6">
-                <div class="text-center mb-16">
-                    <h2 class="text-3xl md:text-4xl font-bold mb-4">
-                        <span class="bg-gradient-to-r from-purple-400 to-pink-400 bg-clip-text text-transparent">Last</span> Leaks
-                    </h2>
-                    <p class="max-w-2xl mx-auto text-gray-400 text-lg">
-                        Stay updated with the latest discovered data breaches and intelligence.
-                    </p>
-                </div>
-                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-                    <!-- Placeholder Leak Item 1 -->
-                    <div class="leak-item bg-gray-800/50 rounded-xl p-6 border border-gray-700 hover:shadow-lg hover:shadow-pink-500/30 transition-shadow duration-300">
-                        <h3 class="text-xl font-semibold text-pink-400 mb-2">Major Corp Database Exposed</h3>
-                        <p class="text-gray-400 text-sm mb-1"><i class="fas fa-fingerprint mr-2 text-gray-500"></i>Source: DarkNet Forum X</p>
-                        <p class="text-gray-400 text-sm mb-3"><i class="fas fa-calendar-alt mr-2 text-gray-500"></i>Date: 2023-10-25</p>
-                        <p class="text-gray-300 leading-relaxed">Over 1 million user records including emails and hashed passwords found online, potentially affecting numerous individuals.</p>
-                        <a href="#"
-                           class="view-leak-details inline-block mt-4 text-purple-400 hover:text-purple-300 font-medium group"
-                           data-title="Major Corp Database Exposed"
-                           data-source="DarkNet Forum X"
-                           data-date="2023-10-25"
-                           data-description="Over 1 million user records including emails and hashed passwords found online, potentially affecting numerous individuals.">
-                           View Details <i class="fas fa-arrow-right ml-1 transform group-hover:translate-x-1 transition-transform"></i>
-                        </a>
-                    </div>
-                    <!-- Placeholder Leak Item 2 -->
-                    <div class="leak-item bg-gray-800/50 rounded-xl p-6 border border-gray-700 hover:shadow-lg hover:shadow-pink-500/30 transition-shadow duration-300">
-                        <h3 class="text-xl font-semibold text-pink-400 mb-2">Government Agency Breach</h3>
-                        <p class="text-gray-400 text-sm mb-1"><i class="fas fa-fingerprint mr-2 text-gray-500"></i>Source: Security Researcher Tip</p>
-                        <p class="text-gray-400 text-sm mb-3"><i class="fas fa-calendar-alt mr-2 text-gray-500"></i>Date: 2023-10-22</p>
-                        <p class="text-gray-300 leading-relaxed">Sensitive documents and internal communications leaked from a misconfigured government server, raising security concerns.</p>
-                        <a href="#"
-                           class="view-leak-details inline-block mt-4 text-purple-400 hover:text-purple-300 font-medium group"
-                           data-title="Government Agency Breach"
-                           data-source="Security Researcher Tip"
-                           data-date="2023-10-22"
-                           data-description="Sensitive documents and internal communications leaked from a misconfigured government server, raising security concerns.">
-                           View Details <i class="fas fa-arrow-right ml-1 transform group-hover:translate-x-1 transition-transform"></i>
-                        </a>
-                    </div>
-                    <!-- Placeholder Leak Item 3 -->
-                    <div class="leak-item bg-gray-800/50 rounded-xl p-6 border border-gray-700 hover:shadow-lg hover:shadow-pink-500/30 transition-shadow duration-300">
-                        <h3 class="text-xl font-semibold text-pink-400 mb-2">Social Media Platform Credentials</h3>
-                        <p class="text-gray-400 text-sm mb-1"><i class="fas fa-fingerprint mr-2 text-gray-500"></i>Source: Paste Site Y</p>
-                        <p class="text-gray-400 text-sm mb-3"><i class="fas fa-calendar-alt mr-2 text-gray-500"></i>Date: 2023-10-20</p>
-                        <p class="text-gray-300 leading-relaxed">A list of 50,000 usernames and passwords for a popular social media site appeared online, urging users to change credentials.</p>
-                        <a href="#"
-                           class="view-leak-details inline-block mt-4 text-purple-400 hover:text-purple-300 font-medium group"
-                           data-title="Social Media Platform Credentials"
-                           data-source="Paste Site Y"
-                           data-date="2023-10-20"
-                           data-description="A list of 50,000 usernames and passwords for a popular social media site appeared online, urging users to change credentials.">
-                           View Details <i class="fas fa-arrow-right ml-1 transform group-hover:translate-x-1 transition-transform"></i>
-                        </a>
-                    </div>
-                </div>
-            </div>
-        </section>
-
-        <!-- Features Section -->
-        <section id="features" class="py-20 bg-gray-900/50">
-            <div class="container mx-auto px-6">
-                <div class="text-center mb-16">
-                    <h2 class="text-3xl md:text-4xl font-bold mb-4">
-                        <span class="bg-gradient-to-r from-purple-400 to-pink-400 bg-clip-text text-transparent">Powerful</span> Features
-                    </h2>
-                    <p class="max-w-2xl mx-auto text-gray-400 text-lg">
-                        Designed for professionals who need comprehensive data intelligence solutions
-                    </p>
-                </div>
-
-                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-                    <!-- Feature 1 -->
-                    <div class="feature-card bg-gray-800/50 rounded-xl p-8 border border-gray-800 transition-all duration-300">
-                        <div class="w-14 h-14 rounded-lg bg-purple-900/30 flex items-center justify-center mb-6">
-                            <i class="fas fa-search text-purple-400 text-2xl"></i>
-                        </div>
-                        <h3 class="text-xl font-bold mb-3">Deep Web Scanning</h3>
-                        <p class="text-gray-400">
-                            Access and analyze data from the deep web with our specialized crawlers that go beyond surface-level indexing.
-                        </p>
-                    </div>
-
-                    <!-- Feature 2 -->
-                    <div class="feature-card bg-gray-800/50 rounded-xl p-8 border border-gray-800 transition-all duration-300">
-                        <div class="w-14 h-14 rounded-lg bg-pink-900/30 flex items-center justify-center mb-6">
-                            <i class="fas fa-project-diagram text-pink-400 text-2xl"></i>
-                        </div>
-                        <h3 class="text-xl font-bold mb-3">Relationship Mapping</h3>
-                        <p class="text-gray-400">
-                            Visualize complex connections between entities with interactive graphs that reveal hidden patterns.
-                        </p>
-                    </div>
-
-                    <!-- Feature 3 -->
-                    <div class="feature-card bg-gray-800/50 rounded-xl p-8 border border-gray-800 transition-all duration-300">
-                        <div class="w-14 h-14 rounded-lg bg-blue-900/30 flex items-center justify-center mb-6">
-                            <i class="fas fa-robot text-blue-400 text-2xl"></i>
-                        </div>
-                        <h3 class="text-xl font-bold mb-3">AI-Powered Analysis</h3>
-                        <p class="text-gray-400">
-                            Our machine learning models identify relevant insights and anomalies in massive datasets automatically.
-                        </p>
-                    </div>
-
-                    <!-- Feature 4 -->
-                    <div class="feature-card bg-gray-800/50 rounded-xl p-8 border border-gray-800 transition-all duration-300">
-                        <div class="w-14 h-14 rounded-lg bg-green-900/30 flex items-center justify-center mb-6">
-                            <i class="fas fa-shield-alt text-green-400 text-2xl"></i>
-                        </div>
-                        <h3 class="text-xl font-bold mb-3">Secure Data Handling</h3>
-                        <p class="text-gray-400">
-                            Enterprise-grade encryption and secure protocols ensure your investigations remain confidential.
-                        </p>
-                    </div>
-
-                    <!-- Feature 5 -->
-                    <div class="feature-card bg-gray-800/50 rounded-xl p-8 border border-gray-800 transition-all duration-300">
-                        <div class="w-14 h-14 rounded-lg bg-yellow-900/30 flex items-center justify-center mb-6">
-                            <i class="fas fa-bolt text-yellow-400 text-2xl"></i>
-                        </div>
-                        <h3 class="text-xl font-bold mb-3">Real-Time Monitoring</h3>
-                        <p class="text-gray-400">
-                            Set up alerts for specific data patterns and get notified immediately when new relevant information appears.
-                        </p>
-                    </div>
-
-                    <!-- Feature 6 -->
-                    <div class="feature-card bg-gray-800/50 rounded-xl p-8 border border-gray-800 transition-all duration-300">
-                        <div class="w-14 h-14 rounded-lg bg-red-900/30 flex items-center justify-center mb-6">
-                            <i class="fas fa-chart-line text-red-400 text-2xl"></i>
-                        </div>
-                        <h3 class="text-xl font-bold mb-3">Comprehensive Reporting</h3>
-                        <p class="text-gray-400">
-                            Generate detailed, customizable reports with visualizations that make complex data understandable.
-                        </p>
-                    </div>
-                </div>
-            </div>
-        </section>
-
-        <!-- About Section -->
-        <section id="developer-api" class="py-20 bg-gray-900">
-            <div class="container mx-auto px-6">
-                <div class="flex flex-col lg:flex-row items-center gap-12">
-                    <div class="lg:w-1/2">
-                        <div class="relative">
-                            <div class="w-full h-full bg-gradient-to-r from-purple-500/20 to-pink-500/20 rounded-xl absolute -inset-2 blur-lg"></div>
-                            <div class="relative bg-gray-800 rounded-xl overflow-hidden border border-gray-700">
-                                <div class="p-4 bg-gray-900 border-b border-gray-800 flex space-x-2">
-                                    <div class="w-3 h-3 rounded-full bg-red-500"></div>
-                                    <div class="w-3 h-3 rounded-full bg-yellow-500"></div>
-                                    <div class="w-3 h-3 rounded-full bg-green-500"></div>
-                                </div>
-                                <div class="p-4">
-                                    <div class="mockup-code bg-gray-900 text-sm p-4">
-                                        <pre><code><span class="text-purple-400">const</span> <span class="text-blue-400">analyzeData</span> = <span class="text-purple-400">async</span> (dataset) => {</code></pre>
-                                        <pre><code>  <span class="text-purple-400">const</span> <span class="text-pink-400">results</span> = <span class="text-purple-400">await</span> <span class="text-blue-400">osintAPI</span>.<span class="text-blue-400">deepScan</span>(dataset);</code></pre>
-                                        <pre><code>  <span class="text-purple-400">const</span> <span class="text-pink-400">connections</span> = <span class="text-blue-400">findRelationships</span>(results);</code></pre>
-                                        <pre><code>  <span class="text-purple-400">return</span> <span class="text-blue-400">visualizeNetwork</span>(connections);</code></pre>
-                                        <pre><code>};</code></pre>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="lg:w-1/2">
-                        <h2 class="text-3xl md:text-4xl font-bold mb-6">
-                            <span class="bg-gradient-to-r from-purple-400 to-pink-400 bg-clip-text text-transparent">Developer</span> Friendly
-                        </h2>
-                        <p class="text-gray-400 mb-6 text-lg">
-                            Our platform offers a comprehensive API that allows you to integrate OSINT capabilities directly into your applications and workflows.
-                        </p>
-                        <ul class="space-y-4 mb-8">
-                            <li class="flex items-start group transition-transform duration-200 ease-in-out hover:translate-x-1">
-                                <i class="fas fa-check-circle text-purple-400 mt-1 mr-3"></i>
-                                <span class="text-gray-300 group-hover:text-purple-300 transition-colors duration-200">RESTful API with detailed documentation</span>
-                            </li>
-                            <li class="flex items-start group transition-transform duration-200 ease-in-out hover:translate-x-1">
-                                <i class="fas fa-check-circle text-purple-400 mt-1 mr-3"></i>
-                                <span class="text-gray-300 group-hover:text-purple-300 transition-colors duration-200">SDKs available for all major languages</span>
-                            </li>
-                            <li class="flex items-start group transition-transform duration-200 ease-in-out hover:translate-x-1">
-                                <i class="fas fa-check-circle text-purple-400 mt-1 mr-3"></i>
-                                <span class="text-gray-300 group-hover:text-purple-300 transition-colors duration-200">Webhooks for real-time data updates</span>
-                            </li>
-                            <li class="flex items-start group transition-transform duration-200 ease-in-out hover:translate-x-1">
-                                <i class="fas fa-check-circle text-purple-400 mt-1 mr-3"></i>
-                                <span class="text-gray-300 group-hover:text-purple-300 transition-colors duration-200">Custom query building with our visual editor</span>
-                            </li>
-                        </ul>
-                        <a href="api-docs.html" class="px-6 py-3 rounded-lg text-md font-semibold bg-gray-800 hover:bg-gray-700 text-white border border-gray-700 hover:border-gray-600 transition-all transform hover:scale-105 active:scale-95 focus:outline-none focus:ring-2 focus:ring-gray-500 focus:ring-offset-2 focus:ring-offset-gray-900 inline-flex items-center">
-                            <i class="fas fa-book-open mr-2"></i> View API Docs
-                        </a>
-                    </div>
-                </div>
-            </div>
-        </section>
-
-        <!-- CTA Section -->
-        <section class="py-20 bg-gradient-to-br from-gray-900 to-gray-800">
-            <div class="container mx-auto px-6">
-                <div class="max-w-4xl mx-auto text-center bg-gray-900/50 rounded-xl p-12 border border-gray-800 glow-box">
-                    <h2 class="text-3xl md:text-4xl font-bold mb-6">
-                        Ready to <span class="bg-gradient-to-r from-purple-400 to-pink-400 bg-clip-text text-transparent">Transform</span> Your OSINT Workflow?
-                    </h2>
-                    <p class="text-xl text-gray-300 mb-10 max-w-3xl mx-auto">
-                        Join thousands of investigators, analysts, and security professionals who rely on our platform for their most critical work.
-                    </p>
-                    <div class="flex flex-col sm:flex-row justify-center gap-4">
-                        <a href="get-started.html" class="block text-center px-8 py-4 rounded-full text-lg font-semibold bg-gradient-to-r from-purple-600 to-pink-600 hover:from-purple-700 hover:to-pink-700 text-white transition-all transform hover:scale-105 active:scale-95 focus:outline-none focus:ring-2 focus:ring-purple-500 focus:ring-offset-2 focus:ring-offset-gray-900/50 hover:shadow-lg hover:shadow-purple-500/40">
-                            Get Started Now
-                        </a>
-                        <a href="contact.html" class="block text-center px-8 py-4 rounded-full text-lg font-semibold bg-gray-800 hover:bg-gray-700 text-white border border-gray-700 hover:border-gray-600 transition-all transform hover:scale-105 active:scale-95 focus:outline-none focus:ring-2 focus:ring-gray-500 focus:ring-offset-2 focus:ring-offset-gray-900/50 hover:shadow-md hover:shadow-gray-600/30">
-                            <i class="fas fa-comments mr-2"></i> Contact Sales
-                        </a>
-                    </div>
-                </div>
-            </div>
-        </section>
-
-        <!-- Footer -->
-        <footer class="bg-gray-900/80 border-t border-gray-800 py-12">
-            <div class="container mx-auto px-6">
-                <div class="grid grid-cols-1 md:grid-cols-4 gap-8">
-                    <div>
-                        <div class="flex items-center space-x-2 mb-4">
-                            <i class="fas fa-bug text-purple-500 text-2xl"></i>
-                            <span class="text-xl font-bold bg-gradient-to-r from-purple-500 to-pink-500 bg-clip-text text-transparent">Osinters</span>
-                        </div>
-                        <p class="text-gray-400 mb-4">
-                            Advanced open-source intelligence platform for professionals.
-                        </p>
-                        <div class="flex space-x-4">
-                            <a href="#" class="text-gray-400 hover:text-purple-400 transform hover:scale-125 transition-all duration-200 ease-in-out">
-                                <i class="fab fa-twitter"></i>
-                            </a>
-                            <a href="#" class="text-gray-400 hover:text-purple-400 transform hover:scale-125 transition-all duration-200 ease-in-out">
-                                <i class="fab fa-github"></i>
-                            </a>
-                            <a href="#" class="text-gray-400 hover:text-purple-400 transform hover:scale-125 transition-all duration-200 ease-in-out">
-                                <i class="fab fa-linkedin"></i>
-                            </a>
-                            <a href="#" class="text-gray-400 hover:text-purple-400 transform hover:scale-125 transition-all duration-200 ease-in-out">
-                                <i class="fab fa-discord"></i>
-                            </a>
-                        </div>
-                    </div>
-                    <div>
-                        <h3 class="text-lg font-semibold text-white mb-4">Product</h3>
-                        <ul class="space-y-2">
-                            <li><a href="features.html" class="text-gray-400 hover:text-purple-400 hover:translate-x-1 transform transition-all duration-200 ease-in-out block">Features</a></li>
-                            <li><a href="pricing.html" class="text-gray-400 hover:text-purple-400 hover:translate-x-1 transform transition-all duration-200 ease-in-out block">Pricing</a></li>
-                            <li><a href="api-docs.html" class="text-gray-400 hover:text-purple-400 hover:translate-x-1 transform transition-all duration-200 ease-in-out block">API</a></li>
-                            <li><a href="integrations.html" class="text-gray-400 hover:text-purple-400 hover:translate-x-1 transform transition-all duration-200 ease-in-out block">Integrations</a></li>
-                        </ul>
-                    </div>
-                    <div>
-                        <h3 class="text-lg font-semibold text-white mb-4">Resources</h3>
-                        <ul class="space-y-2">
-                            <li><a href="documentation.html" class="text-gray-400 hover:text-purple-400 hover:translate-x-1 transform transition-all duration-200 ease-in-out block">Documentation</a></li>
-                            <li><a href="guides.html" class="text-gray-400 hover:text-purple-400 hover:translate-x-1 transform transition-all duration-200 ease-in-out block">Guides</a></li>
-                            <li><a href="blog.html" class="text-gray-400 hover:text-purple-400 hover:translate-x-1 transform transition-all duration-200 ease-in-out block">Blog</a></li>
-                            <li><a href="support.html" class="text-gray-400 hover:text-purple-400 hover:translate-x-1 transform transition-all duration-200 ease-in-out block">Support</a></li>
-                        </ul>
-                    </div>
-                    <div>
-                        <h3 class="text-lg font-semibold text-white mb-4">Company</h3>
-                        <ul class="space-y-2">
-                            <li><a href="about.html" class="text-gray-400 hover:text-purple-400 hover:translate-x-1 transform transition-all duration-200 ease-in-out block">About</a></li>
-                            <li><a href="careers.html" class="text-gray-400 hover:text-purple-400 hover:translate-x-1 transform transition-all duration-200 ease-in-out block">Careers</a></li>
-                            <li><a href="privacy.html" class="text-gray-400 hover:text-purple-400 hover:translate-x-1 transform transition-all duration-200 ease-in-out block">Privacy</a></li>
-                            <li><a href="terms.html" class="text-gray-400 hover:text-purple-400 hover:translate-x-1 transform transition-all duration-200 ease-in-out block">Terms</a></li>
-                        </ul>
-                    </div>
-                </div>
-                <div class="border-t border-gray-800 mt-12 pt-8 flex flex-col md:flex-row justify-between items-center">
-                    <p class="text-gray-500 text-sm mb-4 md:mb-0">
-                        © 2023 Osinters. All rights reserved.
-                    </p>
-                    <div class="flex space-x-6">
-                        <a href="privacy.html" class="text-gray-500 hover:text-purple-400 text-sm transition-colors duration-200 ease-in-out">Privacy Policy</a>
-                        <a href="terms.html" class="text-gray-500 hover:text-purple-400 text-sm transition-colors duration-200 ease-in-out">Terms of Service</a>
-                        <a href="cookie-policy.html" class="text-gray-500 hover:text-purple-400 text-sm transition-colors duration-200 ease-in-out">Cookie Policy</a>
-                    </div>
-                </div>
-            </div>
-        </footer>
-
-        <!-- Video Modal -->
-        <div id="videoModal" class="fixed inset-0 bg-black bg-opacity-80 flex items-center justify-center hidden z-[100] p-4">
-            <div class="bg-gray-900 p-5 rounded-xl shadow-2xl max-w-3xl w-full relative border border-gray-700">
-                <button id="closeModalBtnVideo" aria-label="Close video modal" class="absolute -top-3 -right-3 text-gray-100 bg-purple-600 hover:bg-purple-700 rounded-full w-9 h-9 flex items-center justify-center text-2xl z-10 focus:outline-none focus:ring-2 focus:ring-purple-500 focus:ring-offset-2 focus:ring-offset-gray-900">
-                    &times;
-                </button>
-                <h3 class="text-2xl font-semibold text-purple-400 mb-4 glow-text">Osinters Platform Demo</h3>
-                <div class="aspect-video-container bg-black rounded-lg overflow-hidden shadow-lg">
-                    <!-- DEĞİŞTİRİN: 'YOUR_YOUTUBE_VIDEO_ID' kısmını kendi YouTube video ID'nizle değiştirin. -->
-                    <iframe id="demoVideoPlayer" width="560" height="315" src="" title="Osinters Demo Video" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe>
-                </div>
-            </div>
+    <!-- Modallar -->
+    <div id="command-palette" class="hidden fixed inset-0 z-50 flex justify-center pt-[20vh]">
+        <div id="command-palette-modal" class="w-full max-w-2xl rounded-lg overflow-hidden">
+            <input type="text" id="command-input" class="w-full p-4 text-lg bg-transparent border-b" style="border-color: var(--border-color);" placeholder="Komut ara...">
+            <ul id="command-list" class="max-h-80 overflow-y-auto"></ul>
         </div>
-        <!-- End Video Modal -->
-
-        <!-- Leak Details Modal -->
-        <div id="leakModal" class="fixed inset-0 bg-black bg-opacity-75 flex items-center justify-center hidden z-[100] p-4">
-            <div class="bg-gray-800 p-6 md:p-8 rounded-lg shadow-xl max-w-xl w-full relative border border-gray-700 max-h-[90vh] overflow-y-auto">
-                <button id="closeModalButtonLeak" class="absolute top-3 right-3 md:top-4 md:right-4 text-gray-400 hover:text-white text-3xl leading-none focus:outline-none">
-                    &times;
-                </button>
-                <h3 id="modalTitleElement" class="text-xl md:text-2xl font-bold text-pink-400 mb-4">Leak Details</h3>
-                <div class="text-gray-300 space-y-3">
-                    <p><strong>Source:</strong> <span id="modalSourceElement" class="text-gray-400"></span></p>
-                    <p><strong>Date:</strong> <span id="modalDateElement" class="text-gray-400"></span></p>
-                    <div class="mt-2">
-                        <p class="font-semibold"><strong>Description:</strong></p>
-                        <p id="modalDescriptionElement" class="text-gray-400 leading-relaxed"></p>
-                    </div>
-                </div>
-            </div>
-        </div>
-        <!-- End Leak Details Modal -->
     </div>
 
+    <div id="custom-widget-modal" class="hidden fixed inset-0 bg-black/60 backdrop-blur-md z-50 p-4 flex items-center justify-center modal-backdrop">
+        <div class="modal-content w-full max-w-6xl h-[90vh] p-4 flex flex-col">
+            <div class="flex justify-between items-center mb-4 flex-shrink-0">
+                <h3 class="text-xl font-bold">Özel Widget Oluşturucu</h3>
+                <button id="custom-widget-close" class="p-2 themed-hover rounded-full"><i data-lucide="x" class="w-5 h-5"></i></button>
+            </div>
+            <div class="flex-grow grid grid-cols-1 md:grid-cols-2 gap-4 h-full">
+                <div class="flex flex-col gap-4">
+                    <div><label class="block text-sm mb-1">HTML</label><textarea id="widget-html" class="code-editor w-full h-32"></textarea></div>
+                    <div><label class="block text-sm mb-1">CSS</label><textarea id="widget-css" class="code-editor w-full h-32"></textarea></div>
+                    <div><label class="block text-sm mb-1">JavaScript</label><textarea id="widget-js" class="code-editor w-full h-32"></textarea></div>
+                </div>
+                <div class="flex flex-col">
+                    <label class="block text-sm mb-1">Önizleme</label>
+                    <iframe id="widget-preview" class="w-full h-full border" style="border-color: var(--border-color);" sandbox="allow-scripts"></iframe>
+                </div>
+            </div>
+            <div class="mt-4 flex justify-end space-x-3 flex-shrink-0">
+                <button id="widget-preview-btn" class="px-4 py-2 bg-blue-600/80 hover:bg-blue-600 text-white">Önizle</button>
+                <button id="widget-save-btn" class="px-4 py-2 accent-bg">Kaydet</button>
+            </div>
+        </div>
+    </div>
+
+    <div id="weather-details-modal" class="hidden fixed inset-0 bg-black/60 backdrop-blur-md flex items-center justify-center z-50 p-4 modal-backdrop"> <div class="modal-content p-6 shadow-xl max-w-2xl w-full text-center"> <div class="flex justify-between items-center mb-4"> <h3 id="weather-modal-title" class="text-xl font-bold">5 Günlük Hava Tahmini</h3> <button id="weather-modal-close" class="p-2 themed-hover rounded-full"><i data-lucide="x" class="w-5 h-5"></i></button> </div> <div id="weather-modal-content" class="grid grid-cols-2 md:grid-cols-5 gap-4 text-center"></div></div></div>
+    <div id="alert-modal" class="hidden fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center z-50 modal-backdrop"> <div class="modal-content p-6 shadow-xl max-w-sm text-center"> <h3 id="alert-title" class="text-lg font-bold mb-4"></h3> <p id="alert-text" class="text-sm text-muted mb-6"></p> <button id="alert-ok" class="px-5 py-2 accent-bg">Tamam</button> </div> </div>
+    <div id="confirmation-modal" class="hidden fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center z-50 modal-backdrop"> <div class="modal-content p-6 shadow-xl max-w-sm text-center"> <h3 id="modal-title" class="text-lg font-bold mb-4">Emin misiniz?</h3> <p id="modal-text" class="modal-text text-sm mb-6">Bu işlem geri alınamaz.</p> <div class="flex justify-end space-x-3"> <button id="modal-cancel" class="px-4 py-2 bg-gray-600 hover:bg-gray-500 text-white">İptal</button> <button id="modal-confirm" class="px-4 py-2 bg-red-600 hover:bg-red-500 text-white">Onayla</button> </div> </div> </div>
+
+    <!-- Ayarlar Paneli -->
+    <div id="settings-panel" class="fixed top-0 right-0 h-full w-full md:max-w-sm p-6 overflow-y-auto z-40">
+        <div class="flex justify-between items-center mb-6"> <h2 class="text-2xl font-bold">Ayarlar</h2> <button id="settings-close" class="p-2 themed-hover rounded-full"><i data-lucide="x" class="w-6 h-6"></i></button> </div>
+        <div class="border-b" style="border-color: var(--border-color);">
+            <nav class="flex space-x-2" id="settings-tabs">
+                <button data-tab="appearance" class="tab-button text-sm font-medium">Görünüm</button>
+                <button data-tab="layout" class="tab-button text-sm font-medium">Düzen</button>
+                <button data-tab="widgets" class="tab-button text-sm font-medium">Widget'lar</button>
+                <button data-tab="developer" class="tab-button text-sm font-medium">Geliştirici</button>
+            </nav>
+        </div>
+        <div class="py-6">
+            <div id="tab-appearance" class="tab-content space-y-6">
+                <div class="space-y-4 p-4 panel-section">
+                    <div>
+                        <label class="block text-sm font-medium">Tema</label>
+                        <select id="theme-select" class="input-base w-full mt-1 p-2"> <option value="dark">Koyu</option> <option value="light">Açık</option> <option value="black">Gece</option> <option value="retro">Retro Terminal</option> <option value="serene">Huzurlu Doğa</option> <option value="neon">Neon Gecesi</option> <option value="paper">Minimalist Kağıt</option> </select>
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium">Vurgu Rengi</label>
+                        <div id="accent-color-wrapper" class="mt-1">
+                            <div id="accent-color-display"></div>
+                            <input type="color" id="accent-color-input">
+                        </div>
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium">Arkaplan URL</label> <input type="text" id="bg-image-url" placeholder="https://..." class="input-base w-full mt-1 p-2">
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium">Yazı Tipi</label> <select id="font-select" class="input-base w-full mt-1 p-2"> <option>Inter</option> <option>Roboto</option> <option>Poppins</option> <option>VT323</option> <option>Lora</option> <option>Orbitron</option> <option>Merriweather</option> </select>
+                    </div>
+                    <div class="flex items-center justify-between">
+                        <label class="text-sm font-medium">Animasyonlar</label> <button id="animation-toggle" class="relative inline-flex items-center h-6 rounded-full w-11"></button>
+                    </div>
+                </div>
+                <div class="p-4 panel-section"> <h3 class="font-bold mb-3 text-lg">Bağlantılarım</h3> <div id="link-list" class="space-y-2 mb-4 max-h-40 overflow-y-auto"></div><div class="flex space-x-2"><input type="text" id="link-name-input" placeholder="İsim" class="input-base w-1/2 p-2"><input type="text" id="link-url-input" placeholder="URL" class="input-base w-1/2 p-2"></div><button id="add-link-btn" class="w-full mt-3 p-2 accent-bg font-bold">Ekle</button></div>
+                <div class="space-y-2 p-4 panel-section"> <h3 class="font-bold mb-3 text-lg">Veri Yönetimi</h3> <button id="export-settings-btn" class="w-full p-2 bg-blue-600/50 hover:bg-blue-600/70 text-white">Dışa Aktar</button> <button id="import-settings-btn" class="w-full p-2 mt-2 bg-green-600/50 hover:bg-green-600/70 text-white">İçe Aktar</button> <input type="file" id="import-file-input" class="hidden" accept=".json"> <button id="reset-settings-btn" class="w-full p-2 mt-2 bg-red-600/50 hover:bg-red-600/70 text-white">Sıfırla</button> </div>
+            </div>
+            <div id="tab-layout" class="tab-content space-y-4"> <div class="space-y-4 p-4 panel-section"> <div><label class="block text-sm font-medium">Sütun Sayısı: <span id="column-count-label"></span></label><input type="range" id="column-count" min="1" max="5" step="1" class="w-full mt-1"></div><div><label class="block text-sm font-medium">Widget Aralığı: <span id="gap-size-label"></span>px</label><input type="range"id="gap-size" min="8" max="40" step="4" class="w-full mt-1"></div></div> </div>
+            <div id="tab-widgets" class="tab-content space-y-3"> <div id="widget-toggle-list" class="space-y-3 p-4 panel-section"></div> </div>
+            <div id="tab-developer" class="tab-content space-y-3">
+                <div class="p-4 panel-section">
+                    <h3 class="font-bold mb-3 text-lg">Özel Widget'lar</h3>
+                    <div id="custom-widget-list" class="space-y-2 mb-4"></div>
+                    <button id="add-custom-widget-btn" class="w-full p-2 accent-bg font-bold">Yeni Widget Oluştur</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Widget Şablonları -->
+    <template id="widget-day-progress-template"><div class="widget animated p-4 md:p-6" data-widget-id="day_progress"><h4 class="font-bold mb-3">Günün İlerlemesi</h4><div class="w-full h-2 rounded-full" style="background-color: var(--border-color);"><div id="day-progress" class="accent-bg h-2 rounded-full"></div></div><div id="day-progress-text" class="text-right text-sm mt-2" style="color: var(--text-muted)"></div></div></template>
+    <template id="widget-weather-template"><div id="weather-widget" class="widget animated p-4 md:p-6" data-widget-id="weather"><h4 class="font-bold mb-4">Hava Durumu</h4> <div id="weather-content">Yükleniyor...</div></div></template>
+    <template id="widget-links-template"><div class="widget animated p-4 md:p-6" data-widget-id="links"><h4 class="font-bold mb-4">Hızlı Bağlantılar</h4><ul id="quick-links-list" class="space-y-3 text-lg"></ul></div></template>
+    <template id="widget-tech-links-template"><div class="widget animated p-4 md:p-6" data-widget-id="tech_links"><h4 class="font-bold mb-4">Teknoloji & Geliştirme</h4><ul id="tech-links-list" class="space-y-3 text-lg"><li><a href="https://github.com" target="_blank" class="flex items-center space-x-2 hover:accent-text transition-colors"><i data-lucide="github" class="w-4 h-4"></i><span>GitHub</span></a></li><li><a href="https://stackoverflow.com" target="_blank" class="flex items-center space-x-2 hover:accent-text transition-colors"><i data-lucide="layers" class="w-4 h-4"></i><span>Stack Overflow</span></a></li><li><a href="https://dev.to" target="_blank" class="flex items-center space-x-2 hover:accent-text transition-colors"><i data-lucide="book-open" class="w-4 h-4"></i><span>Dev.to</span></a></li></ul></div></template>
+    <template id="widget-todo-template"><div class="widget animated p-4 md:p-6 flex flex-col h-full min-h-[200px]" data-widget-id="todo"><div class="flex justify-between items-center mb-4"><h4 class="font-bold">Yapılacaklar</h4><select id="todo-category-filter" class="input-base text-sm p-1"><option value="all">Tümü</option><option value="work">İş</option><option value="personal">Kişisel</option></select></div><ul id="todo-list" class="space-y-2 overflow-y-auto flex-grow pr-2"></ul><div class="mt-4 flex space-x-2"><input type="text" id="todo-input" placeholder="Yeni görev..." class="input-base w-full p-2"><select id="todo-category-select" class="input-base p-2 text-sm"><option value="personal">Kişisel</option><option value="work">İş</option></select><button id="add-todo-btn" class="p-2 accent-bg"><i data-lucide="plus"></i></button></div></div></template>
+    <template id="widget-notes-template"><div class="widget animated p-4 md:p-6 flex flex-col h-full min-h-[200px]" data-widget-id="notes"><h4 class="font-bold mb-2">Hızlı Notlar</h4><textarea id="notes-area" class="input-base w-full flex-grow resize-none p-2" style="background:transparent;" placeholder="Aklındakileri yaz..."></textarea></div></template>
+    <template id="widget-quote-template"><div class="widget animated p-6 flex flex-col justify-center text-center" data-widget-id="quote"><div class="flex flex-col h-full justify-center text-center"><i data-lucide="quote" class="w-8 h-8 mx-auto mb-4" style="color: var(--text-muted);"></i><p id="quote-text" class="text-lg italic"></p><p id="quote-author" class="mt-4 font-bold text-sm" style="color: var(--text-muted);"></p></div></div></template>
+    <template id="widget-trends-template"><div class="widget animated p-4 md:p-6" data-widget-id="trends"><h4 class="font-bold mb-4">Gündemdeki Aramalar</h4><ul id="trends-list" class="space-y-3"></ul></div></template>
+    <template id="custom-widget-template"><div class="widget animated p-0 overflow-hidden" data-widget-id=""><iframe class="w-full h-full border-0"></iframe></div></template>
+
     <script>
-        // Create animated data nodes for hero section
-        function createDataNodes() {
-            const container = document.getElementById('data-nodes-container');
-            if (!container) return; // Guard clause if container not found
-            const nodeCount = 20;
+    document.addEventListener('DOMContentLoaded', () => {
+        const THEME_PRESETS = {
+            retro: { font: 'VT323', accent: '#00ff41', bg: '' },
+            serene: { font: 'Lora', accent: '#29b6f6', bg: 'https://images.unsplash.com/photo-1444703686981-a3abbc4d4fe3?q=80&w=2070&auto=format&fit=crop' },
+            neon: { font: 'Orbitron', accent: '#ff00ff', bg: 'https://images.unsplash.com/photo-1521791136064-7986c2920216?q=80&w=2070&auto=format&fit=crop' },
+            paper: { font: 'Merriweather', accent: '#d9534f', bg: '' }
+        };
 
-            for (let i = 0; i < nodeCount; i++) {
-                const node = document.createElement('div');
-                node.className = 'data-node';
+        const DEFAULT_SETTINGS = {
+            theme: 'dark', accentColor: '#3b82f6', backgroundImage: '', font: 'Inter',
+            animations: true, columns: 4, gap: 20,
+            widgets: ['weather', 'day_progress', 'links', 'tech_links', 'todo', 'notes', 'trends', 'quote'],
+            links: [ { name: 'Gmail', url: 'https://mail.google.com' }, { name: 'YouTube', url: 'https://youtube.com' } ],
+            todos: [], notes: '',
+            widgetOrder: ['weather', 'day_progress', 'links', 'tech_links', 'todo', 'notes', 'trends', 'quote'],
+            customWidgets: []
+        };
+        let settings = JSON.parse(localStorage.getItem('dashboardSettingsV7')) || JSON.parse(JSON.stringify(DEFAULT_SETTINGS));
 
-                // Random position
-                const posX = Math.random() * 100;
-                const posY = Math.random() * 100;
-
-                // Random size
-                const size = 4 + Math.random() * 8;
-
-                // Random animation delay
-                const delay = Math.random() * 5;
-
-                node.style.left = `${posX}%`;
-                node.style.top = `${posY}%`;
-                node.style.width = `${size}px`;
-                node.style.height = `${size}px`;
-                node.style.animationDelay = `${delay}s`;
-
-                container.appendChild(node);
-            }
+        if (settings.todos.length > 0 && typeof settings.todos[0] === 'string') {
+            settings.todos = settings.todos.map(task => ({ text: task, done: false, category: 'personal' }));
+        }
+        if (!settings.customWidgets) {
+            settings.customWidgets = [];
         }
 
-        // Toggle mobile menu
-        function setupMobileMenu() {
-            const menuButton = document.querySelector('header button:last-child'); // Hamburger button
-            const nav = document.querySelector('header nav');
+        function saveSettings() { localStorage.setItem('dashboardSettingsV7', JSON.stringify(settings)); }
 
-            if (menuButton && nav) {
-                menuButton.addEventListener('click', () => {
-                    const isExpanded = menuButton.getAttribute('aria-expanded') === 'true' || false;
-                    menuButton.setAttribute('aria-expanded', !isExpanded);
-                    nav.classList.toggle('hidden');
-                    nav.classList.toggle('flex'); 
-                    nav.classList.toggle('flex-col'); 
-                    nav.classList.toggle('absolute'); 
-                    nav.classList.toggle('top-full'); // Position below the header
-                    nav.classList.toggle('left-0');
-                    nav.classList.toggle('right-0');
-                    nav.classList.toggle('bg-gray-900/95'); 
-                    nav.classList.toggle('backdrop-blur-sm');
-                    nav.classList.toggle('p-4'); 
-                    nav.classList.toggle('space-y-4'); 
-                    nav.classList.toggle('md:space-y-0'); 
-                    nav.classList.toggle('border-t');
-                    nav.classList.toggle('border-gray-800');
-                });
-            }
-        }
-        // Smooth scrolling for anchor links
-        function setupSmoothScrolling() {
-            document.querySelectorAll('a[href^="#"]').forEach(anchor => {
-                anchor.addEventListener('click', function (e) {
-                    e.preventDefault();
-
-                    const targetId = this.getAttribute('href');
-                    if (targetId === '#') return;
-
-                    const targetElement = document.querySelector(targetId);
-                    if (targetElement) {
-                        targetElement.scrollIntoView({
-                            behavior: 'smooth'
-                        });
-                    }
-                });
-            });
+        function getContrastingTextColor(hex) {
+            if (!hex) return '#ffffff';
+            const hexValue = hex.startsWith('#') ? hex.substring(1) : hex;
+            const r = parseInt(hexValue.substr(0, 2), 16);
+            const g = parseInt(hexValue.substr(2, 2), 16);
+            const b = parseInt(hexValue.substr(4, 2), 16);
+            const yiq = ((r * 299) + (g * 587) + (b * 114)) / 1000;
+            return (yiq >= 128) ? '#111827' : '#ffffff';
         }
 
-        // Setup Leak Modal
-        function setupLeakModal() {
-            const viewDetailsButtons = document.querySelectorAll('.view-leak-details');
-            const leakModal = document.getElementById('leakModal');
-            const closeModalButton = document.getElementById('closeModalButtonLeak'); // Changed ID for clarity
-            const modalTitleElement = document.getElementById('modalTitleElement');
-            const modalSourceElement = document.getElementById('modalSourceElement');
-            const modalDateElement = document.getElementById('modalDateElement');
-            const modalDescriptionElement = document.getElementById('modalDescriptionElement');
+        const widgetGrid = document.getElementById('widget-grid');
+        const settingsPanel = document.getElementById('settings-panel');
+        const weatherDetailsModal = document.getElementById('weather-details-modal');
+        const commandPalette = document.getElementById('command-palette');
+        const commandInput = document.getElementById('command-input');
+        const commandList = document.getElementById('command-list');
+        const customWidgetModal = document.getElementById('custom-widget-modal');
 
-            if (!leakModal || !closeModalButton || !modalTitleElement || !modalSourceElement || !modalDateElement || !modalDescriptionElement) {
-                console.warn('Leak modal elements not found. Ensure all modal HTML elements have the correct IDs.');
-                return;
-            }
+        let ALL_WIDGETS = {};
 
-            viewDetailsButtons.forEach(button => {
-                button.addEventListener('click', function(event) {
-                    event.preventDefault();
-                    
-                    modalTitleElement.textContent = this.dataset.title || 'N/A';
-                    modalSourceElement.textContent = this.dataset.source || 'N/A';
-                    modalDateElement.textContent = this.dataset.date || 'N/A';
-                    modalDescriptionElement.textContent = this.dataset.description || 'No description available.';
-                    
-                    leakModal.classList.remove('hidden');
-                    document.body.style.overflow = 'hidden'; // Prevent background scrolling
-                });
-            });
-
-            const closeTheLeakModal = () => {
-                leakModal.classList.add('hidden');
-                document.body.style.overflow = ''; // Restore background scrolling
+        function buildWidgetList() {
+            ALL_WIDGETS = {
+                day_progress: { name: 'Günün İlerlemesi', template: 'widget-day-progress-template' },
+                weather: { name: 'Hava Durumu', template: 'widget-weather-template' },
+                links: { name: 'Hızlı Bağlantılar', template: 'widget-links-template' },
+                tech_links: { name: 'Teknoloji Linkleri', template: 'widget-tech-links-template' },
+                todo: { name: 'Yapılacaklar', template: 'widget-todo-template' },
+                notes: { name: 'Notlar', template: 'widget-notes-template' },
+                quote: { name: 'Günün Sözü', template: 'widget-quote-template' },
+                trends: { name: 'Gündem', template: 'widget-trends-template' },
             };
+            settings.customWidgets.forEach(widget => {
+                ALL_WIDGETS[widget.id] = { name: widget.name, template: 'custom-widget-template', isCustom: true };
+            });
+        }
 
-            closeModalButton.addEventListener('click', closeTheLeakModal);
+        function applySettings() {
+            document.body.dataset.theme = settings.theme;
+            const fontToApply = settings.font;
+            const fontName = fontToApply.replace(' ', '+');
+            const fontWeights = ':wght@400;500;700;900';
+            document.getElementById('main-font').href = `https://fonts.googleapis.com/css2?family=${fontName}${fontWeights}&display=swap`;
 
-            window.addEventListener('keydown', (event) => {
-                if (event.key === 'Escape' && !leakModal.classList.contains('hidden')) {
-                    closeTheLeakModal();
+            document.documentElement.style.setProperty('--font-family', `'${fontToApply}', sans-serif`);
+            document.documentElement.style.setProperty('--accent-color', settings.accentColor);
+            document.documentElement.style.setProperty('--accent-text-color', getContrastingTextColor(settings.accentColor));
+            document.body.style.backgroundImage = settings.backgroundImage ? `url(${settings.backgroundImage})` : 'none';
+            document.body.classList.toggle('no-animations', !settings.animations);
+
+            const columns = window.innerWidth < 768 ? 1 : settings.columns;
+            widgetGrid.style.gridTemplateColumns = `repeat(${columns}, minmax(0, 1fr))`;
+            widgetGrid.style.gap = `${settings.gap}px`;
+
+            buildWidgetList();
+            updateSettingsPanelValues();
+            renderWidgets();
+        }
+
+        function renderWidgets() {
+            widgetGrid.innerHTML = '';
+            let visibleWidgetCount = 0;
+            const animationDelayBase = settings.animations ? 75 : 0;
+            if(!settings.widgetOrder) settings.widgetOrder = Object.keys(ALL_WIDGETS);
+
+            settings.widgetOrder.forEach(widgetId => {
+                if (settings.widgets.includes(widgetId) && ALL_WIDGETS[widgetId]) {
+                    const widgetInfo = ALL_WIDGETS[widgetId];
+                    const template = document.getElementById(widgetInfo.template);
+                    if(template) {
+                        const clone = template.content.cloneNode(true);
+                        const widgetElement = clone.querySelector('.widget') || clone.querySelector('[data-widget-id]');
+                        widgetElement.dataset.widgetId = widgetId;
+
+                        if (widgetInfo.isCustom) {
+                            const customWidgetData = settings.customWidgets.find(w => w.id === widgetId);
+                            const iframe = widgetElement.querySelector('iframe');
+                            const iframeContent = `
+                                <style>${customWidgetData.css}</style>
+                                ${customWidgetData.html}
+                                <script>${customWidgetData.js}<\/script>
+                            `;
+                            iframe.srcdoc = iframeContent;
+                        }
+
+                        if (widgetElement) { widgetElement.style.animationDelay = `${200 + (visibleWidgetCount * animationDelayBase)}ms`; }
+                        widgetGrid.appendChild(clone);
+                        visibleWidgetCount++;
+                    }
                 }
             });
+            initWidgetFunctions();
+        }
 
-            leakModal.addEventListener('click', (event) => {
-                if (event.target === leakModal) { 
-                    closeTheLeakModal();
+        function initWidgetFunctions() {
+            updateTime();
+            if (settings.widgets.includes('day_progress')) updateDayProgress();
+            if (settings.widgets.includes('weather')) initWeatherWidget();
+            if (settings.widgets.includes('links')) renderQuickLinks();
+            if (settings.widgets.includes('todo')) initTodoWidget();
+            if (settings.widgets.includes('notes')) initNotesWidget();
+            if (settings.widgets.includes('quote')) initQuoteWidget();
+            if (settings.widgets.includes('trends')) initTrendsWidget();
+            lucide.createIcons();
+        }
+
+        // Native Widget Functions... (omitted for brevity, they are the same)
+        const updateTime=()=>{const e=document.getElementById("clock");e&&(e.textContent=(new Date).toLocaleTimeString("tr-TR",{hour:"2-digit",minute:"2-digit"}))},updateDayProgress=()=>{const e=document.querySelector('[data-widget-id="day_progress"]');if(!e)return;const t=new Date,n=(t-new Date(t.getFullYear(),t.getMonth(),t.getDate()))/864e5*100,o=e.querySelector("#day-progress");o&&(o.style.width=`${n}%`);const d=e.querySelector("#day-progress-text");d&&(d.textContent=`%${n.toFixed(0)}`)};function initWeatherWidget(){const e=document.getElementById("weather-widget");if(!e)return;const t=e.querySelector("#weather-content"),n=e=>{t.textContent=e},o="895284fb2d2c50a520ea537456963d9c",d=async(i,l)=>{try{const s=await fetch(`https://api.openweathermap.org/data/2.5/weather?lat=${i}&lon=${l}&appid=${o}&units=metric&lang=tr`);if(!s.ok)throw new Error("Hava durumu verisi alınamadı");const a=await fetch(`https://api.openweathermap.org/data/2.5/forecast?lat=${i}&lon=${l}&appid=${o}&units=metric&lang=tr`),c=await s.json(),r=await a.json();t.innerHTML=`<div class="flex justify-between items-center"><span>${c.name}</span><span class="font-bold text-2xl">${Math.round(c.main.temp)}°C</span></div><div class="text-sm capitalize" style="color:var(--text-muted)">${c.weather[0].description}</div>`,e.onclick=()=>{const e=document.getElementById("weather-modal-content");document.getElementById("weather-modal-title").textContent=`${r.city.name} - 5 Günlük Tahmin`;const t={};r.list.forEach(e=>{const n=e.dt_txt.split(" ")[0];t[n]||(t[n]=[]),t[n].push(e)}),e.innerHTML=Object.keys(t).slice(0,5).map(e=>{const n=t[e][0],o=(new Date(e)).toLocaleDateString("tr-TR",{weekday:"long"});return`\n                                <div class="p-4 themed-hover rounded-lg">\n                                    <p class="font-bold">${o}</p>\n                                    <img src="https://openweathermap.org/img/wn/${n.weather[0].icon}@2x.png" alt="${n.weather[0].description}" class="w-16 h-16 mx-auto">\n                                    <p class="text-lg">${Math.round(n.main.temp)}°C</p>\n                                    <p class="text-sm capitalize" style="color:var(--text-muted)">${n.weather[0].description}</p>\n                                </div>\n                            `}).join(""),weatherDetailsModal.classList.remove("hidden"),lucide.createIcons()}}catch(i){console.error(i),n("Veri alınamadı.")}};navigator.geolocation.getCurrentPosition(e=>{const{latitude:t,longitude:n}=e.coords;d(t,n)},()=>{n("Konum izni gerekli.")})}const renderQuickLinks=()=>{const e=document.querySelector("#quick-links-list");if(!e)return;e.innerHTML="",settings.links.forEach(t=>{e.innerHTML+=`<li><a href="${t.url}" target="_blank" class="flex items-center space-x-2 hover:accent-text transition-colors"><i data-lucide="link" class="w-4 h-4"></i><span>${t.name}</span></a></li>`}),lucide.createIcons()};function initTodoWidget(){const e=document.querySelector('[data-widget-id="todo"]');if(!e)return;const t=e.querySelector("#todo-list"),n=e.querySelector("#todo-input"),o=e.querySelector("#add-todo-btn"),d=e.querySelector("#todo-category-select"),i=e.querySelector("#todo-category-filter");function l(){const e=i.value,n=settings.todos.filter(t=>"all"===e||t.category===e);t.innerHTML=0===n.length?`<li class="text-center" style="color: var(--text-muted);">Bu kategoride görev yok.</li>`:n.map(e=>{const n=settings.todos.findIndex(t=>t.text===e.text&&t.category===e.category);return`<li class="flex items-center justify-between p-2 themed-hover"><span class="${e.done?"line-through text-muted":""} cursor-pointer" data-index="${n}">${e.text}</span><button class="remove-todo p-1" data-index="${n}"><i data-lucide="trash-2" class="w-4 h-4" style="color:var(--text-muted)"></i></button></li>`}).join(""),lucide.createIcons()}const s=()=>{""!==n.value.trim()&&(settings.todos.unshift({text:n.value.trim(),done:!1,category:d.value}),n.value="",saveSettings(),l())};o.onclick=s,n.onkeydown=e=>{e.key==="Enter"&&s()},t.onclick=e=>{const n=e.target.closest("button, span");if(!n)return;const o=n.dataset.index;n.matches(".remove-todo, .remove-todo *")?settings.todos.splice(o,1):n.matches("span")&&(settings.todos[o].done=!settings.todos[o].done),saveSettings(),l()},i.onchange=l,l()}const initNotesWidget=()=>{const e=document.querySelector('[data-widget-id="notes"]');if(!e)return;const t=e.querySelector("#notes-area");t.value=settings.notes;let n;t.oninput=()=>{clearTimeout(n),n=setTimeout(()=>{settings.notes=t.value,saveSettings()},500)}},initQuoteWidget=()=>{const e=document.querySelector('[data-widget-id="quote"]');if(!e)return;const t=[{text:"Hayal edebiliyorsan, yapabilirsin.",author:"Walt Disney"},{text:"Başarının sırrı, başlamaktır.",author:"Mark Twain"},{text:"Bugün yap, yarın 'keşke' deme.",author:"Bilinmiyor"}],n=t[Math.floor(Math.random()*t.length)],o=e.querySelector("#quote-text"),d=e.querySelector("#quote-author");o&&(o.textContent=`“${n.text}”`),d&&(d.textContent=`- ${n.author}`)},initTrendsWidget=()=>{const e=document.querySelector('[data-widget-id="trends"]');if(!e)return;const t=["Yapay Zeka Gelişmeleri","Yeni Akıllı Telefonlar","Yazılım Güncellemeleri","Popüler Diziler","Hisse Senedi Piyasası"],n=e.querySelector("#trends-list");n.innerHTML=t.map(e=>`<li><a href="https://www.google.com/search?q=${encodeURIComponent(e)}" target="_blank" class="flex items-center space-x-2 hover:accent-text transition-colors"><i data-lucide="trending-up" class="w-4 h-4"></i><span>${e}</span></a></li>`).join(""),lucide.createIcons()};
+
+        function updateSettingsPanelValues() {
+            document.getElementById('theme-select').value = settings.theme;
+            document.getElementById('accent-color-input').value = settings.accentColor;
+            document.getElementById('accent-color-display').style.backgroundColor = settings.accentColor;
+            document.getElementById('bg-image-url').value = settings.backgroundImage;
+            document.getElementById('font-select').value = settings.font;
+            document.getElementById('column-count').value = settings.columns;
+            document.getElementById('column-count-label').textContent = settings.columns;
+            document.getElementById('gap-size').value = settings.gap;
+            document.getElementById('gap-size-label').textContent = settings.gap;
+            updateAnimationToggleUI();
+            renderWidgetToggles();
+            renderLinkManager();
+            renderCustomWidgetManager();
+        }
+
+        function renderWidgetToggles() {
+            const listEl = document.getElementById('widget-toggle-list');
+            listEl.innerHTML = '';
+            Object.entries(ALL_WIDGETS).forEach(([id, {name, isCustom}]) => {
+                const isEnabled = settings.widgets.includes(id);
+                listEl.innerHTML += `
+                    <div class="flex items-center justify-between">
+                        <span class="text-sm">${name} ${isCustom ? '<span class="text-xs accent-text">(Özel)</span>': ''}</span>
+                        <div class="flex items-center">
+                            ${isCustom ? `
+                                <button class="p-1 mr-2 themed-hover" data-edit-widget="${id}"><i data-lucide="pencil" class="w-4 h-4"></i></button>
+                                <button class="p-1 mr-2 themed-hover" data-delete-widget="${id}"><i data-lucide="trash-2" class="w-4 h-4"></i></button>
+                            ` : ''}
+                            <button data-widget-id="${id}" class="widget-toggle relative inline-flex items-center h-6 rounded-full w-11 transition-colors ${isEnabled ? 'accent-bg' : 'bg-gray-600'}"><span class="inline-block w-4 h-4 transform bg-white rounded-full transition-transform" style="transform: ${isEnabled ? 'translateX(22px)' : 'translateX(2px)'}"></span></button>
+                        </div>
+                    </div>`;
+            });
+            lucide.createIcons();
+        }
+
+        function renderLinkManager() { const listEl = document.getElementById('link-list'); listEl.innerHTML = ''; settings.links.forEach((link, index) => { listEl.innerHTML += `<div class="flex items-center justify-between text-sm p-1.5 themed-hover"><div class="truncate"><span class="font-semibold">${link.name}</span><span class="text-xs ml-2" style="color:var(--text-muted)">${link.url}</span></div><button class="remove-link p-1 flex-shrink-0 ml-2" data-index="${index}"><i data-lucide="x" class="w-4 h-4"></i></button></div>`; }); lucide.createIcons(); }
+        const updateAnimationToggleUI = () => { const btn = document.getElementById('animation-toggle'); if(!btn) return; btn.className = `relative inline-flex items-center h-6 rounded-full w-11 transition-colors ${settings.animations ? 'accent-bg' : 'bg-gray-600'}`; btn.innerHTML = `<span class="inline-block w-4 h-4 transform bg-white rounded-full transition-transform" style="transform: ${settings.animations ? 'translateX(22px)' : 'translateX(2px)'}"></span>`; };
+
+        function showAlert(title, text) { const modal = document.getElementById('alert-modal'); modal.querySelector('#alert-title').textContent = title; modal.querySelector('#alert-text').textContent = text; modal.classList.remove('hidden'); const close = () => { modal.classList.add('fade-out'); setTimeout(() => { modal.classList.add('hidden'); modal.classList.remove('fade-out'); }, 300); }; modal.querySelector('#alert-ok').onclick = close; }
+        function showConfirmation(title, text, onConfirm) { const modal = document.getElementById('confirmation-modal'); modal.querySelector('#modal-title').textContent = title; modal.querySelector('#modal-text').textContent = text; modal.classList.remove('hidden'); const confirmBtn = modal.querySelector('#modal-confirm'); const cancelBtn = modal.querySelector('#modal-cancel'); const newConfirmBtn = confirmBtn.cloneNode(true); confirmBtn.parentNode.replaceChild(newConfirmBtn, confirmBtn); const close = () => { modal.classList.add('fade-out'); setTimeout(() => { modal.classList.add('hidden'); modal.classList.remove('fade-out'); }, 300); }; newConfirmBtn.onclick = () => { onConfirm(); close(); }; cancelBtn.onclick = close; }
+
+        function setupSettingsListeners() {
+            document.getElementById('settings-toggle').addEventListener('click', () => settingsPanel.classList.add('open'));
+            document.getElementById('settings-close').addEventListener('click', () => settingsPanel.classList.remove('open'));
+            document.getElementById('theme-select').addEventListener('change', (e) => { settings.theme = e.target.value; const preset = THEME_PRESETS[settings.theme]; if (preset) { settings.font = preset.font; settings.accentColor = preset.accent; settings.backgroundImage = preset.bg; } applySettings(); saveSettings(); });
+
+            const accentColorInput = document.getElementById('accent-color-input');
+            const accentColorDisplay = document.getElementById('accent-color-display');
+            accentColorInput.addEventListener('input', (e) => {
+                const newColor = e.target.value;
+                settings.accentColor = newColor;
+                accentColorDisplay.style.backgroundColor = newColor;
+                document.documentElement.style.setProperty('--accent-color', newColor);
+                document.documentElement.style.setProperty('--accent-text-color', getContrastingTextColor(newColor));
+            });
+            accentColorInput.addEventListener('change', (e) => {
+                settings.accentColor = e.target.value;
+                saveSettings();
+            });
+
+            document.getElementById('bg-image-url').addEventListener('change', (e) => { settings.backgroundImage = e.target.value; applySettings(); saveSettings(); });
+            document.getElementById('font-select').addEventListener('change', (e) => { settings.font = e.target.value; applySettings(); saveSettings(); });
+            document.getElementById('animation-toggle').addEventListener('click', () => { settings.animations = !settings.animations; applySettings(); saveSettings(); });
+            document.getElementById('column-count').addEventListener('input', (e) => { settings.columns = e.target.value; applySettings(); });
+            document.getElementById('column-count').addEventListener('change', saveSettings);
+            document.getElementById('gap-size').addEventListener('input', (e) => { settings.gap = e.target.value; applySettings(); });
+            document.getElementById('gap-size').addEventListener('change', saveSettings);
+            document.getElementById('widget-toggle-list').addEventListener('click', (e) => {
+                const button = e.target.closest('.widget-toggle');
+                if (button) {
+                    const widgetId = button.dataset.widgetId; const index = settings.widgets.indexOf(widgetId); if(index > -1){ settings.widgets.splice(index, 1); } else { settings.widgets.push(widgetId); } renderWidgets(); updateSettingsPanelValues(); saveSettings();
+                }
+                const editBtn = e.target.closest('[data-edit-widget]');
+                if(editBtn) {
+                    const widgetId = editBtn.dataset.editWidget;
+                    openCustomWidgetModal(widgetId);
+                }
+                 const deleteBtn = e.target.closest('[data-delete-widget]');
+                if(deleteBtn) {
+                    const widgetId = deleteBtn.dataset.deleteWidget;
+                    showConfirmation("Widget'ı Sil?", "Bu özel widget kalıcı olarak silinecek.", () => {
+                        settings.customWidgets = settings.customWidgets.filter(w => w.id !== widgetId);
+                        settings.widgets = settings.widgets.filter(wId => wId !== widgetId);
+                        settings.widgetOrder = settings.widgetOrder.filter(wId => wId !== widgetId);
+                        saveSettings();
+                        applySettings();
+                    });
                 }
             });
+            document.getElementById('add-link-btn').addEventListener('click', () => { const nameInput = document.getElementById('link-name-input'); const urlInput = document.getElementById('link-url-input'); if (nameInput.value && urlInput.value) { settings.links.push({ name: nameInput.value, url: urlInput.value.startsWith('http') ? urlInput.value : `https://${urlInput.value}` }); nameInput.value = ''; urlInput.value = ''; saveSettings(); renderLinkManager(); renderQuickLinks(); } });
+            document.getElementById('link-list').addEventListener('click', (e) => { const removeBtn = e.target.closest('.remove-link'); if (removeBtn) { settings.links.splice(removeBtn.dataset.index, 1); saveSettings(); renderLinkManager(); renderQuickLinks(); } });
+            document.getElementById('export-settings-btn').addEventListener('click', () => { const dataStr = JSON.stringify(settings); const linkElement = document.createElement('a'); linkElement.setAttribute('href', 'data:application/json;charset=utf-8,'+ encodeURIComponent(dataStr)); linkElement.setAttribute('download', 'dashboard-settings.json'); linkElement.click(); });
+            const importFileInput = document.getElementById('import-file-input');
+            document.getElementById('import-settings-btn').addEventListener('click', () => importFileInput.click());
+            importFileInput.addEventListener('change', (event) => { const reader = new FileReader(); reader.onload = (e) => { try { const importedSettings = JSON.parse(e.target.result); if(typeof importedSettings === 'object' && importedSettings !== null) { settings = {...DEFAULT_SETTINGS, ...importedSettings}; saveSettings(); applySettings(); } else { throw new Error("Invalid format"); } } catch { showAlert("Hata", "Geçersiz veya bozuk ayar dosyası."); }}; reader.readAsText(event.target.files[0]); });
+            document.getElementById('reset-settings-btn').addEventListener('click', () => { showConfirmation('Her Şeyi Sıfırla?', 'Tüm ayarlarınız ve verileriniz kalıcı olarak silinecek.', () => { localStorage.removeItem('dashboardSettingsV7'); settings = JSON.parse(JSON.stringify(DEFAULT_SETTINGS)); applySettings(); }); });
+
+            const tabs = document.getElementById('settings-tabs');
+            tabs.addEventListener('click', (e) => { if (e.target.tagName === 'BUTTON') { const targetTab = e.target.dataset.tab; tabs.querySelectorAll('button').forEach(btn => btn.classList.remove('active')); e.target.classList.add('active'); document.querySelectorAll('.tab-content').forEach(content => content.classList.toggle('active', content.id === `tab-${targetTab}`)); } });
+            document.getElementById('weather-modal-close').addEventListener('click', () => weatherDetailsModal.classList.add('hidden'));
+
+            document.getElementById('add-custom-widget-btn').addEventListener('click', () => openCustomWidgetModal());
         }
 
-        // Video Modal Script
-        function setupVideoModal() {
-            const watchDemoBtn = document.getElementById('watchDemoBtn');
-            const videoModal = document.getElementById('videoModal');
-            const closeModalBtnVideo = document.getElementById('closeModalBtnVideo'); // Changed ID for clarity
-            const demoVideoPlayer = document.getElementById('demoVideoPlayer');
-            
-            // DEĞİŞTİRİN: 'YOUR_YOUTUBE_VIDEO_ID' kısmını kendi YouTube video ID'nizle değiştirin.
-            // Örnek olarak 'dQw4w9WgXcQ' (Rick Astley) kullanılmıştır.
-            const youtubeVideoId = 'RNufAD5cSmg'; 
-            const videoBaseUrl = 'https://www.youtube.com/embed/';
-
-            if (watchDemoBtn && videoModal && closeModalBtnVideo && demoVideoPlayer) {
-                watchDemoBtn.addEventListener('click', () => {
-                    demoVideoPlayer.src = `${videoBaseUrl}${youtubeVideoId}?autoplay=1&rel=0&modestbranding=1`; 
-                    videoModal.classList.remove('hidden');
-                    document.body.style.overflow = 'hidden'; // Arka plan kaydırmasını engelle
-                });
-
-                const closeTheVideoModal = () => {
-                    videoModal.classList.add('hidden');
-                    demoVideoPlayer.src = ''; // Videoyu durdurmak için src'yi temizle
-                    document.body.style.overflow = ''; // Arka plan kaydırmasını geri yükle
-                };
-
-                closeModalBtnVideo.addEventListener('click', closeTheVideoModal);
-                videoModal.addEventListener('click', (event) => { // Modal dışına tıklayınca kapat
-                    if (event.target === videoModal) {
-                        closeTheVideoModal();
-                    }
-                });
-                document.addEventListener('keydown', (event) => { // Escape tuşu ile kapat
-                    if (event.key === 'Escape' && !videoModal.classList.contains('hidden')) {
-                        closeTheVideoModal();
-                    }
-                });
-            } else {
-                console.error('Video modal elemanları bulunamadı. IDleri kontrol edin: watchDemoBtn, videoModal, closeModalBtnVideo, demoVideoPlayer');
-            }
-        }
-
-        // Setup Scroll Animations
-        function setupScrollAnimations() {
-            const elementsToAnimate = document.querySelectorAll(
-                // Last Leaks items, Feature cards, Developer API columns, CTA box
-                '.leak-item, .feature-card, #developer-api .lg\\:flex-row > div, section.py-20.bg-gradient-to-br .glow-box'
-            );
-
-            if (!elementsToAnimate.length) {
-                // console.warn('Scroll animation: No elements found to animate.');
-                return;
-            }
-
-            const observer = new IntersectionObserver((entries, observerInstance) => {
-                entries.forEach(entry => {
-                    if (entry.isIntersecting) {
-                        entry.target.classList.add('is-visible');
-                        observerInstance.unobserve(entry.target); // Stop observing once animated
-                    }
-                });
-            }, {
-                threshold: 0.1 // Trigger when 10% of the element is visible
-            });
-
-            elementsToAnimate.forEach(element => {
-                element.classList.add('scroll-animate'); // Add initial state class
-                observer.observe(element);
-            });
-        }
-
-        // Initialize everything when DOM is loaded
-        document.addEventListener('DOMContentLoaded', () => {
-            createDataNodes();
-            setupMobileMenu();
-            setupSmoothScrolling();
-            setupLeakModal(); 
-            setupVideoModal(); // Initialize the video modal functionality
-            setupScrollAnimations(); // Initialize scroll animations
+        // Command Palette Logic
+        const commands = [
+            { id: 'search', name: 'Google\'da Ara', desc: '`g ` ön eki ile arama yapın', action: (q) => { window.open(`https://www.google.com/search?q=${q}`) } },
+            { id: 'add_todo', name: 'Görev Ekle', desc: '`/todo ` ön eki ile görev ekleyin', action: (q) => { settings.todos.unshift({text: q, done: false, category: 'personal'}); saveSettings(); applySettings(); } },
+            { id: 'change_theme', name: 'Tema Değiştir', desc: '`/tema ` ön eki ile temayı değiştirin', action: (q) => { if (Object.keys(THEME_PRESETS).concat(['dark', 'light', 'black']).includes(q)) { settings.theme = q; saveSettings(); applySettings(); }} },
+            { id: 'open_settings', name: 'Ayarları Aç', desc: 'Ayarlar panelini açar', action: () => { settingsPanel.classList.add('open'); }}
+        ];
+        settings.links.forEach(link => {
+            commands.push({ id: `link_${link.name}`, name: `Git: ${link.name}`, desc: `/link ${link.name}`, action: () => { window.open(link.url) }})
         });
 
-        // Logic for the "Start Free Trial" button
-        const startFreeTrialButton = document.getElementById('startFreeTrialButton');
-        if (startFreeTrialButton) {
-            startFreeTrialButton.addEventListener('click', function() {
-                // Check if user is "registered" (using localStorage for simulation)
-                if (localStorage.getItem('userHasRegistered') === 'true') {
-                    window.location.href = 'login.html'; // User is registered, go to login
-                } else {
-                    window.location.href = 'register.html'; // User not registered, go to register
-                }
-            });
+        let activeCommandIndex = 0;
+        function renderCommands(filteredCommands) {
+            commandList.innerHTML = filteredCommands.map((cmd, index) => `
+                <li class="command-item ${index === activeCommandIndex ? 'selected' : ''} p-4 flex justify-between items-center cursor-pointer" data-index="${index}">
+                    <span>${cmd.name}</span>
+                    <span class="command-desc text-sm" style="color:var(--text-muted)">${cmd.desc}</span>
+                </li>
+            `).join('');
         }
+        function toggleCommandPalette(show) {
+            commandPalette.classList.toggle('hidden', !show);
+            if (show) {
+                commandInput.value = '';
+                commandInput.focus();
+                renderCommands(commands);
+            }
+        }
+        commandInput.addEventListener('input', () => {
+            const query = commandInput.value.toLowerCase();
+            const filtered = commands.filter(c => c.name.toLowerCase().includes(query) || c.desc.toLowerCase().includes(query));
+            renderCommands(filtered);
+        });
+        commandInput.addEventListener('keydown', (e) => {
+            const items = commandList.querySelectorAll('.command-item');
+            if (e.key === 'ArrowDown') {
+                activeCommandIndex = (activeCommandIndex + 1) % items.length;
+                renderCommands(commands.filter(c => c.name.toLowerCase().includes(commandInput.value.toLowerCase())));
+            } else if (e.key === 'ArrowUp') {
+                activeCommandIndex = (activeCommandIndex - 1 + items.length) % items.length;
+                renderCommands(commands.filter(c => c.name.toLowerCase().includes(commandInput.value.toLowerCase())));
+            } else if (e.key === 'Enter') {
+                const query = commandInput.value;
+                let commandExecuted = false;
+                if (query.startsWith('g ')) { commands.find(c => c.id === 'search').action(query.substring(2)); commandExecuted = true; }
+                else if (query.startsWith('/todo ')) { commands.find(c => c.id === 'add_todo').action(query.substring(6)); commandExecuted = true; }
+                else if (query.startsWith('/tema ')) { commands.find(c => c.id === 'change_theme').action(query.substring(6)); commandExecuted = true; }
+                else if (query.startsWith('/link ')) {
+                    const linkName = query.substring(6);
+                    const link = settings.links.find(l => l.name.toLowerCase() === linkName.toLowerCase());
+                    if(link) { window.open(link.url); commandExecuted = true;}
+                } else {
+                    const selectedCommand = commands.filter(c => c.name.toLowerCase().includes(query.toLowerCase()))[activeCommandIndex];
+                    if (selectedCommand) { selectedCommand.action(); commandExecuted = true; }
+                }
+                if(commandExecuted) toggleCommandPalette(false);
+            } else if (e.key === 'Escape') {
+                toggleCommandPalette(false);
+            }
+        });
+        window.addEventListener('keydown', (e) => {
+            if ((e.metaKey || e.ctrlKey) && e.key === 'k') {
+                e.preventDefault();
+                toggleCommandPalette(!commandPalette.classList.contains('hidden'));
+            }
+        });
+
+        // Custom Widget Logic
+        const widgetHtml = document.getElementById('widget-html');
+        const widgetCss = document.getElementById('widget-css');
+        const widgetJs = document.getElementById('widget-js');
+        const widgetPreview = document.getElementById('widget-preview');
+        let currentEditingWidgetId = null;
+
+        function openCustomWidgetModal(widgetId = null) {
+            currentEditingWidgetId = widgetId;
+            if (widgetId) {
+                const widgetData = settings.customWidgets.find(w => w.id === widgetId);
+                widgetHtml.value = widgetData.html;
+                widgetCss.value = widgetData.css;
+                widgetJs.value = widgetData.js;
+            } else {
+                widgetHtml.value = '<h3>Merhaba Dünya!</h3>';
+                widgetCss.value = 'h3 { color: red; }';
+                widgetJs.value = "console.log('Widget çalıştı!');";
+            }
+            updateWidgetPreview();
+            customWidgetModal.classList.remove('hidden');
+        }
+
+        function updateWidgetPreview() {
+            const content = `
+                <style>${widgetCss.value}</style>
+                ${widgetHtml.value}
+                <script>${widgetJs.value}<\/script>
+            `;
+            widgetPreview.srcdoc = content;
+        }
+
+        document.getElementById('widget-preview-btn').addEventListener('click', updateWidgetPreview);
+        document.getElementById('custom-widget-close').addEventListener('click', () => customWidgetModal.classList.add('hidden'));
+        document.getElementById('widget-save-btn').addEventListener('click', () => {
+            let widgetName;
+            if (currentEditingWidgetId) {
+                widgetName = settings.customWidgets.find(w => w.id === currentEditingWidgetId).name;
+            } else {
+                widgetName = prompt("Widget'ınıza bir isim verin:", "Yeni Widget");
+                if (!widgetName) return;
+            }
+
+            const widgetData = {
+                id: currentEditingWidgetId || `custom_${Date.now()}`,
+                name: widgetName,
+                html: widgetHtml.value,
+                css: widgetCss.value,
+                js: widgetJs.value,
+            };
+
+            if (currentEditingWidgetId) {
+                const index = settings.customWidgets.findIndex(w => w.id === currentEditingWidgetId);
+                settings.customWidgets[index] = widgetData;
+            } else {
+                settings.customWidgets.push(widgetData);
+                settings.widgets.push(widgetData.id);
+                settings.widgetOrder.push(widgetData.id);
+            }
+
+            saveSettings();
+            applySettings();
+            customWidgetModal.classList.add('hidden');
+        });
+
+        function renderCustomWidgetManager() {
+            const listEl = document.getElementById('custom-widget-list');
+            if(!listEl) return;
+            listEl.innerHTML = settings.customWidgets.map(widget => `
+                <div class="flex items-center justify-between text-sm p-1.5 themed-hover">
+                    <span>${widget.name}</span>
+                    <div>
+                        <button class="p-1 themed-hover" data-edit-widget="${widget.id}"><i data-lucide="pencil" class="w-4 h-4"></i></button>
+                        <button class="p-1 themed-hover" data-delete-widget="${widget.id}"><i data-lucide="trash-2" class="w-4 h-4"></i></button>
+                    </div>
+                </div>
+            `).join('');
+             listEl.addEventListener('click', (e) => {
+                 const editBtn = e.target.closest('[data-edit-widget]');
+                if(editBtn) {
+                    openCustomWidgetModal(editBtn.dataset.editWidget);
+                }
+                 const deleteBtn = e.target.closest('[data-delete-widget]');
+                if(deleteBtn) {
+                    const widgetId = deleteBtn.dataset.deleteWidget;
+                     showConfirmation("Widget'ı Sil?", "Bu özel widget kalıcı olarak silinecek.", () => {
+                        settings.customWidgets = settings.customWidgets.filter(w => w.id !== widgetId);
+                        settings.widgets = settings.widgets.filter(wId => wId !== widgetId);
+                        settings.widgetOrder = settings.widgetOrder.filter(wId => wId !== widgetId);
+                        saveSettings();
+                        applySettings();
+                    });
+                }
+             });
+            lucide.createIcons();
+        }
+
+        Sortable.create(widgetGrid, { animation: 200, ghostClass: 'sortable-ghost', dragClass: 'sortable-drag', onEnd: () => { settings.widgetOrder = Array.from(widgetGrid.querySelectorAll('[data-widget-id]')).map(child => child.dataset.widgetId); saveSettings(); } });
+
+        setupSettingsListeners();
+        document.querySelector('#settings-tabs button').classList.add('active');
+        document.querySelector('.tab-content').classList.add('active');
+        applySettings();
+
+        window.addEventListener('resize', () => { const columns = window.innerWidth < 768 ? 1 : settings.columns; widgetGrid.style.gridTemplateColumns = `repeat(${columns}, minmax(0, 1fr))`; });
+
+        setInterval(updateTime, 1000);
+        setInterval(() => { if (settings.widgets.includes('day_progress')) updateDayProgress(); }, 5000);
+        setInterval(() => { if (settings.widgets.includes('weather')) initWeatherWidget(); }, 15 * 60 * 1000);
+    });
     </script>
 </body>
 </html>
